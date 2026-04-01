@@ -1,0 +1,12 @@
+var R=require("../../chunks/ssr/[turbopack]_runtime.js")("server/app/_not-found/page.js")
+R.c("server/chunks/ssr/[root-of-the-server]__04fqvkw._.js")
+R.c("server/chunks/ssr/04yy_next_dist_esm_build_templates_app-page_0ytnm3p.js")
+R.c("server/chunks/ssr/[root-of-the-server]__0y2v5fp._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__0-llw8m._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__0pf8z6s._.js")
+R.c("server/chunks/ssr/Downloads_vitalis-website_0~t-voj._.js")
+R.c("server/chunks/ssr/04yy_next_dist_client_components_0th3xtl._.js")
+R.c("server/chunks/ssr/04yy_next_dist_client_components_builtin_unauthorized_0oi5vv5.js")
+R.c("server/chunks/ssr/0ipn_vitalis-website__next-internal_server_app__not-found_page_actions_13zkz_~.js")
+R.m(54803)
+module.exports=R.m(54803).exports

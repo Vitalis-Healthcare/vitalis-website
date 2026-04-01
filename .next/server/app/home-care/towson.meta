@@ -1,0 +1,16 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/home-care/layout,_N_T_/home-care/[slug]/layout,_N_T_/home-care/[slug]/page,_N_T_/home-care/towson"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/home-care/$d$slug/__PAGE__",
+    "/home-care/$d$slug",
+    "/home-care",
+    "/_index",
+    "/_head"
+  ]
+}
