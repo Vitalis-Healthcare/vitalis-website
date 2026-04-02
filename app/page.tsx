@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Nav from '@/components/Nav'
 import TrustBar from '@/components/TrustBar'
 import Footer from '@/components/Footer'
@@ -6,7 +7,7 @@ import CTASection from '@/components/CTASection'
 
 export const metadata: Metadata = {
   title: 'Vitalis HealthCare | Home Care in Silver Spring, MD',
-  description: 'Licensed, certified home care in Silver Spring, MD and across Maryland. Companion care, personal care & skilled nursing. Joint Commission Gold Seal. VA & Medicaid accepted. Call 240.716.6874.',
+  description: 'Licensed, certified home care in Silver Spring, MD and across Maryland. Companion care, personal care & skilled nursing. MDH OHCQ licensed & regulated. VA & Medicaid accepted. Call 240.716.6874.',
 }
 
 const S = {
@@ -45,20 +46,20 @@ export default function HomePage() {
             </a>
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-            {['Joint Commission Gold Seal', 'OHCQ Licensed #3879R', 'VA & Medicaid Accepted', 'CareScout Approved', 'BCHD Contracted', 'Available 24/7'].map((c) => (
+            {['MDH OHCQ Licensed #3879R', 'Maryland Dept. of Health Regulated', 'VA & Medicaid Accepted', 'CareScout Approved', 'BCHD Contracted', 'Available 24/7'].map((c) => (
               <span key={c} className="chip"><span className="cdot" />{c}</span>
             ))}
           </div>
         </div>
-        <div style={S.heroImgBox}>
-          {/* Replace with <Image> once photos arrive */}
-          <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'var(--g-lt)', border: '2px dashed #97c459', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="#3b6d11" strokeWidth="1.5" strokeLinecap="round">
-              <circle cx="18" cy="12" r="7" /><path d="M3 34c0-8.284 6.716-15 15-15s15 6.716 15 15" />
-            </svg>
-          </div>
-          <p style={{ fontSize: '14px', color: 'var(--g-bd)', fontWeight: 500, textAlign: 'center' }}>Hero photo goes here</p>
-          <p style={{ fontSize: '12px', color: '#97c459', textAlign: 'center', padding: '0 30px', lineHeight: 1.5 }}>Warm, natural caregiver & client photo</p>
+        <div style={{ ...S.heroImgBox, padding: 0, overflow: 'hidden', position: 'relative' }}>
+          <Image
+            src="/hero-main.png"
+            alt="Vitalis caregiver sharing a warm moment with an elderly client at home"
+            fill
+            style={{ objectFit: 'cover', objectPosition: 'center top' }}
+            sizes="(max-width: 860px) 100vw, 50vw"
+            priority
+          />
         </div>
       </section>
 
@@ -163,16 +164,22 @@ export default function HomePage() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '20px' }}>
             {[
-              { initials: 'OO', name: 'Okezie Ofoegbu', nick: '"Mr. O"', role: 'Administrator', tag: 'Founder' },
-              { initials: 'SE', name: 'Samiya Edwards', nick: '"Sam"', role: 'Client Services Director', tag: 'Client Relations' },
-              { initials: 'ME', name: 'Marie Epah', nick: '', role: 'Clinical Manager', tag: 'Clinical Lead' },
-              { initials: 'HS', name: 'Happiness Samuel', nick: '"Happi"', role: 'Client Care Supervisor', tag: 'Client Support' },
-              { initials: 'PE', name: 'Peace Enoch', nick: '', role: 'Senior Care Advocate', tag: 'Care Quality' },
-            ].map(({ initials, name, nick, role, tag }) => (
+              { initials: 'OO', name: 'Okezie Ofoegbu', nick: '"Mr. O"', role: 'Administrator', tag: 'Founder', photo: '/team/okezie.png' },
+              { initials: 'SE', name: 'Samiya Edwards', nick: '"Sam"', role: 'Client Services Director', tag: 'Client Relations', photo: '/team/samiya.png' },
+              { initials: 'ME', name: 'Marie Epah', nick: '', role: 'Clinical Manager', tag: 'Clinical Lead', photo: '/team/marie.png' },
+              { initials: 'HS', name: 'Happiness Samuel', nick: '"Happi"', role: 'Client Care Supervisor', tag: 'Client Support', photo: '/team/happiness.png' },
+              { initials: 'PE', name: 'Peace Enoch', nick: '', role: 'Senior Care Advocate', tag: 'Care Quality', photo: null },
+            ].map(({ initials, name, nick, role, tag, photo }) => (
               <div key={initials} style={{ borderRadius: '14px', overflow: 'hidden', border: '1px solid var(--border)' }}>
-                <div style={{ aspectRatio: '3/4', background: 'repeating-linear-gradient(45deg,#eaf3de,#eaf3de 10px,#e2f0d4 10px,#e2f0d4 20px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative', gap: '10px' }}>
-                  <div style={{ width: 64, height: 64, borderRadius: '50%', background: '#fff', border: '2px dashed #97c459', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-lora),Georgia,serif', fontSize: '18px', fontWeight: 500, color: 'var(--g-bd)' }}>{initials}</div>
-                  <div style={{ background: 'var(--g-dk)', color: '#c0dd97', fontSize: '10px', fontWeight: 500, padding: '5px 10px', borderRadius: '6px', position: 'absolute', bottom: '12px' }}>📷 Photo needed</div>
+                <div style={{ aspectRatio: '3/4', position: 'relative', background: '#e4f1d4' }}>
+                  {photo ? (
+                    <Image src={photo} alt={name} fill style={{ objectFit: 'cover', objectPosition: 'top' }} sizes="220px" />
+                  ) : (
+                    <div style={{ width: '100%', height: '100%', background: 'repeating-linear-gradient(45deg,#eaf3de,#eaf3de 10px,#e2f0d4 10px,#e2f0d4 20px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                      <div style={{ width: 64, height: 64, borderRadius: '50%', background: '#fff', border: '2px dashed #97c459', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-lora),Georgia,serif', fontSize: '18px', fontWeight: 500, color: 'var(--g-bd)' }}>{initials}</div>
+                      <div style={{ background: 'var(--g-dk)', color: '#c0dd97', fontSize: '10px', fontWeight: 500, padding: '5px 10px', borderRadius: '6px' }}>📷 Photo coming</div>
+                    </div>
+                  )}
                 </div>
                 <div style={{ padding: '14px 16px', background: '#fff' }}>
                   <div style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text)', marginBottom: '2px' }}>
@@ -253,7 +260,7 @@ export default function HomePage() {
                 { q: 'What areas do you serve?', a: 'We serve Silver Spring, Rockville, Gaithersburg, Germantown, Takoma Park, Towson, Pikesville, Owings Mills, Annapolis, and surrounding communities throughout Maryland.' },
                 { q: 'What if we\'re not happy with our caregiver?', a: 'Just tell us. We take this seriously and will find a better match quickly. We also offer a full refund if you cancel within 14 days of starting service.' },
                 { q: 'Do you accept VA benefits for veterans?', a: 'Yes. Veterans and veteran spouses may qualify for up to $2,000/month toward home care through the VA Homemaker and Home Health Aide program. Contact us and we\'ll walk you through the process.' },
-                { q: 'Are your caregivers background-checked and trained?', a: 'Absolutely. Every caregiver goes through a full background check, professional certification, and our in-house refresher training program before they ever enter a client\'s home. Our Clinical Manager oversees all care delivery.' },
+                { q: 'Are your caregivers background-checked and trained?', a: 'Absolutely. Every caregiver goes through a full background check, professional certification, and our in-house refresher training program before they ever enter a client\'s home. Our Clinical Manager oversees all care delivery. Vitalis is licensed and regulated by the Maryland Department of Health Office of Health Care Quality (MDH OHCQ), License #3879R.' },
               ].map(({ q, a }) => (
                 <div key={q} className="faq-item">
                   <div className="faq-q">{q}</div>

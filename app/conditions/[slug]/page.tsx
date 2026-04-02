@@ -74,7 +74,7 @@ export default async function ConditionPage({ params }: Props) {
             <a href="tel:2407166874" className="btn-secondary">Call 240.716.6874</a>
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-            {['OHCQ Licensed #3879R', 'Joint Commission Certified', 'RN-Supervised Care', 'VA & Medicaid Accepted'].map((c) => (
+            {['MDH OHCQ Licensed #3879R', 'Maryland Dept. of Health Regulated', 'RN-Supervised Care', 'VA & Medicaid Accepted'].map((c) => (
               <span key={c} className="chip"><span className="cdot" />{c}</span>
             ))}
           </div>

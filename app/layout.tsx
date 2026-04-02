@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     template: '%s | Vitalis HealthCare',
   },
   description:
-    'Licensed, certified home care in Silver Spring and Montgomery County, MD. Companion care, personal care & skilled nursing. Joint Commission certified. VA & Medicaid accepted. Call 240.716.6874.',
+    'Licensed, certified home care in Silver Spring and Montgomery County, MD. Companion care, personal care & skilled nursing. MDH OHCQ licensed & regulated. VA & Medicaid accepted. Call 240.716.6874.',
   metadataBase: new URL('https://www.vitalishealthcare.com'),
   openGraph: {
     type: 'website',

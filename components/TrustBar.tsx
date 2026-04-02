@@ -8,8 +8,8 @@ interface TrustBarProps {
 }
 
 const defaultItems: TrustItem[] = [
-  { label: 'MD License', value: 'OHCQ #3879R' },
-  { label: 'Certified', value: 'Joint Commission Gold Seal' },
+  { label: 'MDH OHCQ Licensed', value: 'RSA Level 3 · License #3879R' },
+  { label: 'Regulated by', value: 'Maryland Dept. of Health' },
   { label: 'Network', value: 'CareScout Approved' },
   { label: 'Contract', value: 'BCHD · Montgomery County' },
   { label: 'Payment', value: 'VA · Medicaid · LTC · Private Pay' },

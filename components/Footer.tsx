@@ -22,7 +22,7 @@ export default function Footer() {
             info@vitalishealthcare.com · 240.716.6874
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '14px' }}>
-            {['OHCQ #3879R', 'Joint Commission', 'CareScout', 'BCHD'].map((b) => (
+            {['OHCQ #3879R', 'MDH Regulated', 'CareScout', 'BCHD'].map((b) => (
               <span className="cert-badge" key={b}>{b}</span>
             ))}
           </div>
@@ -90,7 +90,7 @@ export default function Footer() {
 
       <div className="foot-bot">
         © {new Date().getFullYear()} Vitalis Healthcare Services, LLC &nbsp;·&nbsp;
-        OHCQ License #3879R &nbsp;·&nbsp; Joint Commission Certified &nbsp;·&nbsp;
+        OHCQ License #3879R &nbsp;·&nbsp; MDH OHCQ Regulated &nbsp;·&nbsp;
         CareScout Approved &nbsp;·&nbsp; All rights reserved.
       </div>
     </footer>

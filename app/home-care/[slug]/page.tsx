@@ -33,8 +33,8 @@ export default async function LocationPage({ params }: Props) {
   const { city, state, county, bchd, intro, countryContext, neighborhoods, stats, faqs, testimonial, relatedLocations } = loc
 
   const trustItems = [
-    { label: 'MD License', value: 'OHCQ #3879R' },
-    { label: 'Certified', value: 'Joint Commission Gold Seal' },
+    { label: 'MDH OHCQ Licensed', value: 'RSA Level 3 · License #3879R' },
+    { label: 'Regulated by', value: 'Maryland Dept. of Health' },
     { label: 'Network', value: 'CareScout Approved' },
     bchd
       ? { label: 'BCHD Recognized', value: county }
@@ -55,7 +55,7 @@ export default async function LocationPage({ params }: Props) {
         address: { '@type': 'PostalAddress', streetAddress: '8757 Georgia Avenue, Suite 440', addressLocality: 'Silver Spring', addressRegion: 'MD', postalCode: '20910', addressCountry: 'US' },
         areaServed: [city, county, 'Maryland'],
         openingHours: ['Mo-Fr 09:00-17:00', 'Sa 10:00-16:00'],
-        hasCredential: ['OHCQ License #3879R', 'Joint Commission Gold Seal Certification', 'CareScout Approved Provider'],
+        hasCredential: ['OHCQ License #3879R', 'Maryland Dept. of Health OHCQ License #3879R — RSA Level 3', 'CareScout Approved Provider'],
       },
       {
         '@type': 'FAQPage',
@@ -94,7 +94,7 @@ export default async function LocationPage({ params }: Props) {
             <a href="tel:2407166874" className="btn-secondary">Call 240.716.6874</a>
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-            {['OHCQ Licensed #3879R', 'Joint Commission Certified', bchd ? 'BCHD Recognized' : county, 'VA & Medicaid Accepted'].map((c) => (
+            {['MDH OHCQ Licensed #3879R', 'Maryland Dept. of Health Regulated', bchd ? 'BCHD Recognized' : county, 'VA & Medicaid Accepted'].map((c) => (
               <span key={c} className="chip"><span className="cdot" />{c}</span>
             ))}
           </div>
