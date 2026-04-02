@@ -33,9 +33,9 @@ export default function Footer() {
             Services
           </h4>
           {[
-            ['Companion Care', '/#services'],
-            ['Personal Care', '/#services'],
-            ['Skilled Nursing', '/#services'],
+            ['Companion Care', '/services/companion-care'],
+            ['Personal Care', '/services/personal-care'],
+            ['Skilled Nursing', '/services/skilled-nursing'],
             ['Dementia Care', '/conditions/dementia'],
             ['Post-Surgery Recovery', '/conditions/post-surgery'],
             ['Stroke Recovery', '/conditions/stroke'],

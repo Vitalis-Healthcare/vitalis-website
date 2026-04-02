@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next'
 import { locations } from '@/lib/data/locations'
 import { conditions } from '@/lib/data/conditions'
+import { services } from '@/lib/data/services'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = 'https://www.vitalishealthcare.com'
@@ -29,5 +30,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.9,
   }))
 
-  return [...staticRoutes, ...locationRoutes, ...conditionRoutes]
+  const serviceRoutes: MetadataRoute.Sitemap = services.map((s) => ({
+    url: `${base}/services/${s.slug}`,
+    lastModified: now,
+    changeFrequency: 'monthly',
+    priority: 0.9,
+  }))
+
+  return [...staticRoutes, ...serviceRoutes, ...locationRoutes, ...conditionRoutes]
 }

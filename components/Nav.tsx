@@ -34,7 +34,7 @@ export default function Nav() {
         </Link>
 
         <div className="nav-links" style={{ display: 'flex', gap: '28px' }}>
-          <Link href="/#services" style={{ fontSize: '14px', color: 'var(--muted)' }}>Services</Link>
+          <Link href="/services/companion-care" style={{ fontSize: '14px', color: 'var(--muted)' }}>Services</Link>
           <Link href="/#conditions" style={{ fontSize: '14px', color: 'var(--muted)' }}>Conditions</Link>
           <Link href="/about" style={{ fontSize: '14px', color: 'var(--muted)' }}>About Us</Link>
           <Link href="/blog" style={{ fontSize: '14px', color: 'var(--muted)' }}>Blog</Link>
