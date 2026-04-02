@@ -1,25 +1,21 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function Footer() {
   return (
     <footer className="footer">
       <div className="foot-grid">
         <div>
-          <h3
-            style={{
-              fontFamily: 'var(--font-lora), Georgia, serif',
-              fontSize: '18px', color: '#c0dd97', marginBottom: '12px',
-            }}
-          >
-            Vitalis HealthCare Services, LLC
-          </h3>
+          <div style={{ marginBottom: '14px' }}>
+            <Image src="/logo-full.png" alt="Vitalis HealthCare Services" width={220} height={70} style={{ objectFit: 'contain', objectPosition: 'left' }} />
+          </div>
           <p style={{ fontSize: '13px', color: '#639922', lineHeight: 1.8 }}>
             A family-owned, Maryland-licensed home care agency serving Silver Spring and communities across Montgomery County, Baltimore County, and Anne Arundel County. Our mission: improve quality of life for our clients in the comfort of their homes.
           </p>
           <p style={{ fontSize: '12px', color: '#3b6d11', marginTop: '14px', lineHeight: 1.8 }}>
             8757 Georgia Avenue, Suite 440<br />
             Silver Spring, MD 20910<br />
-            info@vitalishealthcare.com · 240.716.6874
+            team@vitalishealthcare.com · 240.716.6874
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '14px' }}>
             {['OHCQ #3879R', 'MDH Regulated', 'CareScout', 'BCHD'].map((b) => (
@@ -73,8 +69,8 @@ export default function Footer() {
             Company
           </h4>
           {[
-            ['About Us', '/#about'],
-            ['Meet the Team', '/#team'],
+            ['About Us', '/about'],
+            ['Meet the Team', '/about#team'],
             ['Blog & Resources', '/blog'],
             ['Careers', '/careers'],
             ['Testimonials', '/testimonials'],

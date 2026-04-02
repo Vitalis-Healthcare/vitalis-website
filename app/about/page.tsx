@@ -37,7 +37,7 @@ const schema = {
 
 const stats = [
   { n: '10+', l: 'Years serving Maryland families' },
-  { n: '500+', l: 'Clients cared for since founding' },
+  { n: '250+', l: 'Clients cared for since founding' },
   { n: '200+', l: 'Active trained caregivers' },
   { n: '5,000+', l: 'Hours of care delivered monthly' },
   { n: '3×', l: 'Best of Home Care Employer of Choice\n2022 · 2023 · 2024' },
@@ -97,7 +97,7 @@ Today Happi oversees client scheduling, caregiver coordination, supervisory visi
     nick: '',
     role: 'Senior Care Advocate',
     tag: 'Care Advocacy',
-    photo: null,
+    photo: '/team/peace.png',
     bio: `Peace joined Vitalis as our Senior Care Advocate — the person responsible for building relationships with the hospitals, facilities, physicians, and community organizations that refer clients to us. She brings to this role an impressive academic background: a Master of Science in Business Analytics from the Cox School of Business at Southern Methodist University, and a track record of using data and strategy to drive real results.
 
 But beyond the credentials, Peace is a connector. She genuinely cares about the families she meets in the field — and she's often the first Vitalis person a family encounters, setting the tone for the trust we work hard to earn every day.`,
@@ -275,7 +275,7 @@ export default function AboutPage() {
             <h2 className="sec-h">A decade of care — in Maryland</h2>
           </div>
           <div
-            style={{
+            className="grid-3col" style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(3,1fr)',
               gap: '18px',
@@ -434,6 +434,7 @@ export default function AboutPage() {
                   gap: '36px',
                   alignItems: 'start',
                 }}
+                className="grid-team-bio"
               >
                 {/* Avatar */}
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
@@ -557,7 +558,7 @@ export default function AboutPage() {
             </p>
           </div>
           <div
-            style={{
+            className="grid-2col" style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(2,1fr)',
               gap: '18px',

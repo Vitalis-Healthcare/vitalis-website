@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Lora } from 'next/font/google'
 import { DM_Sans } from 'next/font/google'
+import { GoogleAnalytics } from '@next/third-parties/google'
 import './globals.css'
 
 const lora = Lora({
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${lora.variable} ${dmSans.variable}`}>
       <body>{children}</body>
+      <GoogleAnalytics gaId="G-LPWTD5L870" />
     </html>
   )
 }

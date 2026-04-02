@@ -32,7 +32,7 @@ export default async function ServicePage({ params }: Props) {
   if (!svc) notFound()
 
   const {
-    name, badge, h1, lead, whatItIs, heroImage, heroImageAlt, heroPrompt,
+    name, badge, h1, lead, whatItIs, heroImage, heroImageAlt, heroImagePosition, heroPrompt,
     whoNeedsIt, whatIncludes, howWeDeliver, faqs, testimonial,
     relatedServices, relatedConditions,
   } = svc
@@ -80,8 +80,8 @@ export default async function ServicePage({ params }: Props) {
       </div>
 
       {/* Hero */}
-      <section style={{ background: 'linear-gradient(135deg,#f0f7e8 0%,#e4f1d4 100%)', padding: '0' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: '480px' }}>
+      <section className="svc-hero-section" style={{ background: 'linear-gradient(135deg,#f0f7e8 0%,#e4f1d4 100%)', padding: '0' }}>
+        <div className="hero-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: '480px' }}>
           {/* Left — text */}
           <div style={{ padding: '64px 48px 64px 48px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <div className="lp-badge" style={{ marginBottom: '18px', alignSelf: 'flex-start' }}>
@@ -115,7 +115,7 @@ export default async function ServicePage({ params }: Props) {
                 src={heroImage}
                 alt={heroImageAlt}
                 fill
-                style={{ objectFit: 'cover', objectPosition: 'center top' }}
+                style={{ objectFit: 'cover', objectPosition: heroImagePosition ?? 'center center' }}
                 sizes="50vw"
                 priority
               />
@@ -158,7 +158,7 @@ export default async function ServicePage({ params }: Props) {
           <p className="sec-p" style={{ marginBottom: '28px' }}>
             Families often wait longer than they should. Here are the situations where {svc.shortName.toLowerCase()} makes the clearest difference.
           </p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '18px' }}>
+          <div className="grid-3col" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '18px' }}>
             {whoNeedsIt.map(({ heading, body }) => (
               <div key={heading} className="card">
                 <span className="pill">When to call</span>
@@ -175,7 +175,7 @@ export default async function ServicePage({ params }: Props) {
         <div className="inner">
           <p className="sec-label">What&apos;s included</p>
           <h2 className="sec-h">Everything covered under {svc.shortName.toLowerCase()}</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '18px', marginTop: '28px' }}>
+          <div className="grid-2col" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '18px', marginTop: '28px' }}>
             {whatIncludes.map(({ heading, body }) => (
               <div key={heading} style={{ display: 'flex', gap: '16px', alignItems: 'flex-start', background: '#fff', borderRadius: '12px', border: '1px solid #c0dd97', padding: '22px' }}>
                 <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--g-lt)', border: '1px solid #97c459', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '14px', color: 'var(--g-bd)' }}>✓</div>
@@ -194,7 +194,7 @@ export default async function ServicePage({ params }: Props) {
         <div className="inner">
           <p className="sec-label">The Vitalis difference</p>
           <h2 className="sec-h">How we deliver {svc.shortName.toLowerCase()}</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '18px', marginTop: '28px' }}>
+          <div className="grid-2col" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '18px', marginTop: '28px' }}>
             {howWeDeliver.map(({ heading, body }, i) => (
               <div key={heading} className="card-green" style={{ borderRadius: '12px' }}>
                 <div style={{ fontFamily: 'var(--font-lora),Georgia,serif', fontSize: '32px', fontWeight: 500, color: '#c0dd97', lineHeight: 1, marginBottom: '10px' }}>0{i + 1}</div>
@@ -224,7 +224,7 @@ export default async function ServicePage({ params }: Props) {
       {/* FAQ */}
       <section className="sec sec-alt">
         <div className="inner">
-          <div className="two-col">
+          <div className="two-col grid-faq">
             <div>
               <p className="sec-label">Common questions</p>
               <h2 className="sec-h">{svc.shortName} — what families ask us</h2>
@@ -256,7 +256,7 @@ export default async function ServicePage({ params }: Props) {
       {/* Related */}
       <section className="sec">
         <div className="inner-wide">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '48px' }}>
+          <div className="grid-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '48px' }}>
             <div>
               <p className="sec-label">Other services</p>
               <h2 className="sec-h" style={{ fontSize: '22px', marginBottom: '16px' }}>We also provide</h2>

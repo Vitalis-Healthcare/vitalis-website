@@ -99,7 +99,7 @@ export default async function ConditionPage({ params }: Props) {
           <p className="sec-label">Signs it&apos;s time to call</p>
           <h2 className="sec-h">How do you know when professional care is needed?</h2>
           <p className="sec-p" style={{ marginBottom: '28px' }}>Families often wait too long — not because they don&apos;t care, but because they&apos;re not sure the situation is serious enough. Here are the signs to look for.</p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '18px' }}>
+          <div className="grid-3col" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '18px' }}>
             {signs.map(({ heading, body }) => (
               <div key={heading} className="card">
                 <span className="pill">Warning sign</span>

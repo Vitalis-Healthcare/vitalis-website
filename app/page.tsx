@@ -23,7 +23,7 @@ export default function HomePage() {
       <Nav />
 
       {/* ── HERO ── */}
-      <section style={S.heroSection}>
+      <section style={S.heroSection} className="hero-grid">
         <div>
           <div className="lp-badge" style={{ marginBottom: '22px' }}>
             <span className="bdot" />
@@ -127,7 +127,7 @@ export default function HomePage() {
               Our caregivers go through specialized training for memory loss, recovery after illness or surgery, and fall risk — the four areas where Maryland families need the most support.
             </p>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '20px' }}>
+          <div className="grid-2col" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '20px' }}>
             {[
               { n: '01', h: 'Dementia & Memory Care', p: 'Our caregivers understand that dementia is not just forgetfulness — it changes a person\'s world in ways that require patience, routine, and a lot of kindness. We\'re trained to step into that world with them, not fight against it.', href: '/conditions/dementia', tag: 'Silver Spring · Montgomery County' },
               { n: '02', h: 'Post-Surgery Recovery', p: 'Coming home after surgery can be scary. We help your loved one heal safely — managing medications, supporting movement, watching for complications, and handling all the daily tasks so recovery can stay on track.', href: '/conditions/post-surgery', tag: 'Post-Hospital Discharge · Home Recovery' },
@@ -151,7 +151,7 @@ export default function HomePage() {
       {/* ── TEAM ── */}
       <section className="sec" id="team">
         <div className="inner">
-          <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '56px', alignItems: 'center', marginBottom: '48px' }}>
+          <div className="grid-2col" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '56px', alignItems: 'center', marginBottom: '48px' }}>
             <div>
               <p className="sec-label">Meet the team</p>
               <h2 className="sec-h">Real people.<br />Real commitment.</h2>
@@ -162,13 +162,13 @@ export default function HomePage() {
               <br /><small style={{ fontFamily: 'var(--font-sans)', fontSize: '13px', fontStyle: 'normal', color: '#639922', marginTop: '8px', display: 'block' }}>— Okezie Ofoegbu (&ldquo;Mr. O&rdquo;), Administrator</small>
             </div>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '20px' }}>
+          <div className="grid-5col" style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '20px' }}>
             {[
               { initials: 'OO', name: 'Okezie Ofoegbu', nick: '"Mr. O"', role: 'Administrator', tag: 'Founder', photo: '/team/okezie.png' },
               { initials: 'SE', name: 'Samiya Edwards', nick: '"Sam"', role: 'Client Services Director', tag: 'Client Relations', photo: '/team/samiya.png' },
               { initials: 'ME', name: 'Marie Epah', nick: '', role: 'Clinical Manager', tag: 'Clinical Lead', photo: '/team/marie.png' },
               { initials: 'HS', name: 'Happiness Samuel', nick: '"Happi"', role: 'Client Care Supervisor', tag: 'Client Support', photo: '/team/happiness.png' },
-              { initials: 'PE', name: 'Peace Enoch', nick: '', role: 'Senior Care Advocate', tag: 'Care Quality', photo: null },
+              { initials: 'PE', name: 'Peace Enoch', nick: '', role: 'Senior Care Advocate', tag: 'Care Quality', photo: '/team/peace.png' },
             ].map(({ initials, name, nick, role, tag, photo }) => (
               <div key={initials} style={{ borderRadius: '14px', overflow: 'hidden', border: '1px solid var(--border)' }}>
                 <div style={{ aspectRatio: '3/4', position: 'relative', background: '#e4f1d4' }}>
@@ -202,7 +202,7 @@ export default function HomePage() {
             <h2 className="sec-h">Don&apos;t take our word for it</h2>
             <p className="sec-p" style={{ maxWidth: '520px', marginInline: 'auto' }}>These are real words from real clients and caregivers who have been part of the Vitalis family.</p>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '20px' }}>
+          <div className="grid-2col" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '20px' }}>
             {[
               { stars: '★★★★★', q: '"After a poor experience with our previous agency, we settled with Vitalis because of the attention to detail and professionalism. Our health situation has improved dramatically. We strongly recommend Vitalis to anyone needing high-quality, affordable home care."', who: 'E. Adaku', role: 'Active Client, Silver Spring MD' },
               { stars: '★★★★★', q: '"They care about us and the clients. I have had the same client for a long time. I go there every time and she is waiting for me to help her. She loves it — and so do I."', who: 'A. Ayala', role: 'Caregiver' },
@@ -227,8 +227,8 @@ export default function HomePage() {
             <h2 className="sec-h">We work with most payment types — including VA and Medicaid</h2>
             <p className="sec-p" style={{ maxWidth: '540px', marginInline: 'auto' }}>Not sure how to pay for home care? Don&apos;t let that stop you from calling. We&apos;ll help you figure out what you qualify for and how to make it work for your family&apos;s budget.</p>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '14px' }}>
-            {[['🏥', 'Maryland Medicaid Waiver'], ['🎖️', 'VA Assistance Program'], ['📋', 'Long-Term Care Insurance'], ['💳', 'Private Pay'], ['🩺', 'Medicare (PT / OT / ST)']].map(([icon, label]) => (
+          <div className="grid-5col" style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '14px' }}>
+            {[['🏥', 'Maryland Medicaid Waiver'], ['🎖️', 'VA Assistance Program'], ['📋', 'Long-Term Care Insurance'], ['💳', 'Private Pay'], ['✅', 'CareScout / Genworth Approved']].map(([icon, label]) => (
               <div key={label} className="card" style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: '22px', marginBottom: '8px' }}>{icon}</div>
                 <div style={{ fontSize: '13px', fontWeight: 500, color: 'var(--g-bd)' }}>{label}</div>

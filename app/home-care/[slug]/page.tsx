@@ -51,7 +51,7 @@ export default async function LocationPage({ params }: Props) {
         name: 'Vitalis HealthCare Services',
         url: `https://www.vitalishealthcare.com/home-care/${slug}`,
         telephone: '+12407166874',
-        email: 'info@vitalishealthcare.com',
+        email: 'team@vitalishealthcare.com',
         address: { '@type': 'PostalAddress', streetAddress: '8757 Georgia Avenue, Suite 440', addressLocality: 'Silver Spring', addressRegion: 'MD', postalCode: '20910', addressCountry: 'US' },
         areaServed: [city, county, 'Maryland'],
         openingHours: ['Mo-Fr 09:00-17:00', 'Sa 10:00-16:00'],

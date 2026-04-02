@@ -20,6 +20,7 @@ export interface ServiceData {
   whatItIs: string
   heroImage: string | null
   heroImageAlt: string
+  heroImagePosition?: string
   heroPrompt: string | null
   whoNeedsIt: { heading: string; body: string }[]
   whatIncludes: ServiceFeature[]
@@ -43,6 +44,7 @@ export const services: ServiceData[] = [
     whatItIs: 'Companion care is non-medical home care focused on the social, emotional, and everyday practical needs of seniors and adults living at home. It\'s the service that keeps your loved one engaged, safe, and connected — and gives family members the peace of mind that comes from knowing someone reliable is there.',
     heroImage: '/hero-companion-care.png',
     heroImageAlt: 'Vitalis caregiver and senior client sharing a warm moment looking through a photo album at home',
+    heroImagePosition: 'center 20%',
     heroPrompt: null,
     whoNeedsIt: [
       { heading: 'Living alone and becoming isolated', body: 'Your loved one used to be social and engaged, but increasingly spends days alone. Isolation accelerates cognitive decline and depression in seniors — consistent companionship is a proven intervention.' },
@@ -92,9 +94,10 @@ export const services: ServiceData[] = [
     h1: 'Personal care at home in Maryland — professional, dignified, and always respectful.',
     lead: 'When a parent or spouse needs help with bathing, dressing, or getting around the house, it\'s a transition that touches on dignity, privacy, and trust in ways that few other care decisions do. At Vitalis HealthCare, we handle personal care with the professionalism, discretion, and genuine respect that your loved one deserves — every single day.',
     whatItIs: 'Personal care is hands-on, daily assistance with the activities of living — bathing, grooming, dressing, mobility, and all the physical tasks that become difficult or unsafe for seniors and adults with health challenges. It\'s delivered by trained, background-checked home health aides under the supervision of our Clinical Manager.',
-    heroImage: null,
-    heroImageAlt: 'Vitalis personal care aide assisting an elderly client with morning routine at home',
-    heroPrompt: 'Photorealistic image of a professional female caregiver in scrubs gently helping an elderly woman get ready in a bright, comfortable bedroom. Both are calm and smiling. Warm morning light. Dignified, respectful atmosphere. No text. Documentary style.',
+    heroImage: '/hero-personal-care.png',
+    heroImageAlt: 'Vitalis personal care aide helping an elderly woman with dressing at home',
+    heroImagePosition: 'center 40%',
+    heroPrompt: null,
     whoNeedsIt: [
       { heading: 'Needs help with bathing or showering safely', body: 'Bathing is one of the highest fall-risk moments of the day for seniors. A trained aide provides safe, dignified bathing assistance that prevents accidents while preserving your loved one\'s sense of self.' },
       { heading: 'Dressing has become difficult or unsafe', body: 'Arthritis, weakness, balance issues, or cognitive decline can make dressing a frustrating and risky task. Our aides help efficiently and with patience — keeping the morning routine manageable and on track.' },
@@ -143,9 +146,10 @@ export const services: ServiceData[] = [
     h1: 'Skilled nursing at home in Maryland — hospital-quality clinical care, in your loved one\'s own space.',
     lead: 'There are clinical needs that require a registered nurse — wound care, medication management, post-surgical monitoring, IV therapy. For many families, the alternative to skilled nursing at home is a nursing facility or extended hospital stay. At Vitalis HealthCare, our registered nurses bring the clinical expertise of a healthcare facility directly into the home — so your loved one can heal and be monitored in the place where they\'re most comfortable.',
     whatItIs: 'Skilled nursing is clinical care delivered in the home by a licensed Registered Nurse (RN). It covers medical tasks that go beyond the scope of a home health aide — tasks that require clinical training, licensure, and ongoing professional judgment. Vitalis skilled nursing is supervised by our Clinical Manager and coordinated directly with your loved one\'s physician.',
-    heroImage: null,
-    heroImageAlt: 'Vitalis registered nurse conducting a home health assessment with an elderly patient',
-    heroPrompt: 'Photorealistic image of a professional female registered nurse in scrubs checking blood pressure of an elderly man at his home kitchen table. She is focused and caring. Medical bag visible. Warm, clean home environment. No text. Documentary photography style.',
+    heroImage: '/hero-skilled-nursing.png',
+    heroImageAlt: 'Vitalis registered nurse checking blood pressure of an elderly patient at home',
+    heroImagePosition: 'center 30%',
+    heroPrompt: null,
     whoNeedsIt: [
       { heading: 'Post-surgical wound care & monitoring', body: 'Surgical wounds need professional assessment, dressing changes, and monitoring for infection — tasks that are dangerous to leave to untrained family members. Our RNs manage this with clinical precision.' },
       { heading: 'Complex medication management', body: 'Multiple medications, including injectables, blood thinners, or controlled substances, require professional oversight. Our nurses ensure correct dosing, timing, and monitoring for adverse effects.' },
