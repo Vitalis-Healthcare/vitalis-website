@@ -4,7 +4,23 @@
   "outputDirectory": ".next",
   "installCommand": "npm install",
   "redirects": [
-    { "source": "/forms", "destination": "/blog/forms", "permanent": true }
+    { "source": "/forms", "destination": "/blog/forms", "permanent": true },
+    { "source": "/home-care", "destination": "/home-care/silver-spring", "permanent": true },
+    { "source": "/index.html", "destination": "/", "permanent": true },
+    { "source": "/faqs", "destination": "/#faq", "permanent": true },
+    { "source": "/services", "destination": "/services/companion-care", "permanent": true },
+    { "source": "/services/companion-care-services", "destination": "/services/companion-care", "permanent": true },
+    { "source": "/services/personal-care-services", "destination": "/services/personal-care", "permanent": true },
+    { "source": "/skilled-nursing/:path*", "destination": "/services/skilled-nursing", "permanent": true },
+    { "source": "/thankyou", "destination": "/", "permanent": true },
+    { "source": "/tag/:path*", "destination": "/blog", "permanent": true },
+    { "source": "/category/:path*", "destination": "/blog", "permanent": true },
+    { "source": "/author/:path*", "destination": "/about", "permanent": true },
+    { "source": "/profile/:path*", "destination": "/", "permanent": true },
+    { "source": "/student-registration", "destination": "/careers", "permanent": true },
+    { "source": "/instructor-registration", "destination": "/careers", "permanent": true },
+    { "source": "/dashboard/:path*", "destination": "/", "permanent": true },
+    { "source": "/courses/:path*", "destination": "/", "permanent": true }
   ],
   "headers": [
     {
