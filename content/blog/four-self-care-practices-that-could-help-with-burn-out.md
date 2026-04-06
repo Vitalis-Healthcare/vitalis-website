@@ -3,7 +3,7 @@ title: "Five Self-care Practices That Could Help With Burn Out"
 date: "2024-07-10"
 dateFormatted: "July 10, 2024"
 excerpt: "In today's fast paced world, there is a negative culture that continues growing. Some call it “toxic..."
-category: "Senior Health"
+category: "Caregiver Tips"
 author: "Vitalis HealthCare"
 ---
 
