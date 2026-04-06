@@ -3,7 +3,7 @@ title: "Alzheimers and Brain Awareness"
 date: "2024-06-10"
 dateFormatted: "June 10, 2024"
 excerpt: "Alzheimer is a form of dementia characterized by a progressive memory loss and decline in cognitive abilities, there are other types of dementia that exist with their own distinct..."
-category: "Senior Health"
+category: "Dementia & Memory Care"
 author: "Vitalis HealthCare"
 ---
 
