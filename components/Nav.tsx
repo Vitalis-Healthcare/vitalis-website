@@ -28,7 +28,7 @@ export default function Nav() {
       <nav className="nav-sticky">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 48px', maxWidth: '1280px', margin: '0 auto' }} className="nav-inner">
           <Link href="/" onClick={() => setOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
-            <Image src="/logo-mark.png" alt="Vitalis HealthCare" width={44} height={40} style={{ objectFit: 'contain' }} />
+            <Image src="/logo-mark.png" alt="Vitalis HealthCare" title="Vitalis HealthCare — Home Care in Silver Spring, MD" width={44} height={40} style={{ objectFit: 'contain' }} />
             <span style={{ fontFamily: 'var(--font-lora),Georgia,serif', fontSize: '17px', color: 'var(--text)' }}>Vitalis HealthCare</span>
           </Link>
 
@@ -55,7 +55,7 @@ export default function Nav() {
       <div className={`nav-drawer ${open ? 'nav-drawer-open' : ''}`}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 24px', borderBottom: '1px solid var(--border)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Image src="/logo-mark.png" alt="Vitalis HealthCare" width={28} height={28} style={{ objectFit: 'contain' }} />
+            <Image src="/logo-mark.png" alt="Vitalis HealthCare" title="Vitalis HealthCare — Home Care in Silver Spring, MD" width={28} height={28} style={{ objectFit: 'contain' }} />
             <span style={{ fontFamily: 'var(--font-lora),Georgia,serif', fontSize: '16px', color: 'var(--text)' }}>Vitalis HealthCare</span>
           </div>
           <button onClick={() => setOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', fontSize: '20px', color: 'var(--muted)', lineHeight: 1 }}>✕</button>

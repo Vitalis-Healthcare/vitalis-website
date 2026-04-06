@@ -6,7 +6,7 @@ import Footer from '@/components/Footer'
 export const metadata: Metadata = {
   title: 'Contact Vitalis HealthCare | Silver Spring, MD | 240.716.6874',
   description: 'Contact Vitalis HealthCare Services in Silver Spring, MD. Request home care, reach our team, or connect with us as a referral source. Call 240.716.6874 or WhatsApp us anytime.',
-  openGraph: {
+  alternates: { canonical: '/contact' },  openGraph: {
     title: 'Contact Vitalis HealthCare Services',
     description: 'Three ways to reach us — families, existing clients, and referral sources. We respond the same day.',
   },

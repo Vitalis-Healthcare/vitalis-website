@@ -8,6 +8,21 @@ import CTASection from '@/components/CTASection'
 export const metadata: Metadata = {
   title: 'Vitalis HealthCare | Home Care in Silver Spring, MD',
   description: 'Licensed, certified home care in Silver Spring, MD and across Maryland. Companion care, personal care & skilled nursing. MDH OHCQ licensed & regulated. VA & Medicaid accepted. Call 240.716.6874.',
+  alternates: { canonical: '/' },
+  openGraph: {
+    type: 'website',
+    title: 'Vitalis HealthCare | Home Care in Silver Spring, MD',
+    description: 'Licensed, certified home care in Silver Spring, MD and across Maryland. Companion care, personal care & skilled nursing. MDH OHCQ licensed & regulated. VA & Medicaid accepted. Call 240.716.6874.',
+    url: 'https://www.vitalishealthcare.com',
+    siteName: 'Vitalis HealthCare Services',
+    locale: 'en_US',
+    images: [{ url: '/logo-full.png', width: 600, height: 200, alt: 'Vitalis HealthCare Services' }],
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Vitalis HealthCare | Home Care in Silver Spring, MD',
+    description: 'Licensed, certified home care in Silver Spring & Montgomery County, MD. Companion care, personal care & skilled nursing. Call 240.716.6874.',
+  },
 }
 
 const S = {
@@ -55,6 +70,7 @@ export default function HomePage() {
           <Image
             src="/hero-main.png"
             alt="Vitalis caregiver sharing a warm moment with an elderly client at home"
+            title="Vitalis HealthCare — trusted home care in Silver Spring, MD"
             fill
             style={{ objectFit: 'cover', objectPosition: 'center top' }}
             sizes="(max-width: 860px) 100vw, 50vw"
@@ -173,7 +189,7 @@ export default function HomePage() {
               <div key={initials} style={{ borderRadius: '14px', overflow: 'hidden', border: '1px solid var(--border)' }}>
                 <div style={{ aspectRatio: '3/4', position: 'relative', background: '#e4f1d4' }}>
                   {photo ? (
-                    <Image src={photo} alt={name} fill style={{ objectFit: 'cover', objectPosition: 'top' }} sizes="220px" />
+                    <Image src={photo} alt={name} title={`${name} — ${role} at Vitalis HealthCare`} fill style={{ objectFit: 'cover', objectPosition: 'top' }} sizes="220px" />
                   ) : (
                     <div style={{ width: '100%', height: '100%', background: 'repeating-linear-gradient(45deg,#eaf3de,#eaf3de 10px,#e2f0d4 10px,#e2f0d4 20px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
                       <div style={{ width: 64, height: 64, borderRadius: '50%', background: '#fff', border: '2px dashed #97c459', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-lora),Georgia,serif', fontSize: '18px', fontWeight: 500, color: 'var(--g-bd)' }}>{initials}</div>

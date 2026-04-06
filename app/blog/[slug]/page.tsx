@@ -19,6 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!post) return {}
   return {
     title: `${post.title} | Vitalis HealthCare Blog`,
+    alternates: { canonical: `/blog/${slug}` },
     description: post.excerpt,
     openGraph: {
       title: post.title,

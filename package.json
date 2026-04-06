@@ -1,6 +1,6 @@
 {
   "name": "vitalis-website",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@next/third-parties": "^16.2.2",
+    "@supabase/supabase-js": "^2.49.4",
     "gray-matter": "^4.0.3",
     "next": "^16.2.2",
     "react": "^19.0.0",
