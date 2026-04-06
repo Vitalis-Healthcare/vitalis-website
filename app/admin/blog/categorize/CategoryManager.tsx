@@ -1,7 +1,13 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { blogPosts, blogCategories, type BlogPost, type BlogCategory } from '@/lib/data/blog-posts'
+
+interface SimplePost {
+  slug: string
+  title: string
+  date: string
+  category: string
+}
 
 const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   'Family Resources':        { bg: '#eaf3de', text: '#27500a', border: '#97c459' },
@@ -13,14 +19,15 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string
   'Company News':            { bg: '#fbeaf0', text: '#993556', border: '#f4c0d1' },
 }
 
-export default function CategoryManager() {
+const DEFAULT_COLOR = { bg: '#f0f0ec', text: '#555', border: '#ccc' }
+
+export default function CategoryManager({ posts, categories }: { posts: SimplePost[]; categories: string[] }) {
   const [pin, setPin]           = useState('')
   const [authed, setAuthed]     = useState(false)
   const [pinError, setPinError] = useState('')
   const [pinLoading, setPinLoading] = useState(false)
 
-  // Category changes: slug → new category
-  const [changes, setChanges] = useState<Record<string, BlogCategory>>({})
+  const [changes, setChanges] = useState<Record<string, string>>({})
   const [filterCat, setFilterCat] = useState<string>('all')
   const [search, setSearch]     = useState('')
   const [saving, setSaving]     = useState(false)
@@ -45,28 +52,32 @@ export default function CategoryManager() {
   }
 
   // ── Derived data ──────────────────────────────────────────────────────
-  const getCategory = (post: BlogPost): BlogCategory =>
+  const getCategory = (post: SimplePost): string =>
     changes[post.slug] || post.category
 
   const filteredPosts = useMemo(() => {
-    let posts = [...blogPosts]
+    let result = [...posts]
     if (filterCat !== 'all') {
-      posts = posts.filter(p => getCategory(p) === filterCat)
+      result = result.filter(p => getCategory(p) === filterCat)
     }
     if (search.trim()) {
       const q = search.toLowerCase()
-      posts = posts.filter(p => p.title.toLowerCase().includes(q) || p.slug.includes(q))
+      result = result.filter(p => p.title.toLowerCase().includes(q) || p.slug.includes(q))
     }
-    return posts
-  }, [filterCat, search, changes])
+    return result
+  }, [filterCat, search, changes, posts])
 
   const changeCount = Object.keys(changes).length
+
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = {}
-    blogCategories.forEach(c => { counts[c] = 0 })
-    blogPosts.forEach(p => { counts[getCategory(p)] = (counts[getCategory(p)] || 0) + 1 })
+    categories.forEach(c => { counts[c] = 0 })
+    posts.forEach(p => {
+      const cat = getCategory(p)
+      counts[cat] = (counts[cat] || 0) + 1
+    })
     return counts
-  }, [changes])
+  }, [changes, posts, categories])
 
   // ── Save ──────────────────────────────────────────────────────────────
   async function handleSave() {
@@ -128,7 +139,7 @@ export default function CategoryManager() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{ fontSize: 18 }}>🏷️</span>
           <span style={{ color: '#fff', fontFamily: 'Lora, Georgia, serif', fontSize: '1.05rem' }}>Blog Category Manager</span>
-          <span style={{ color: '#97c459', fontSize: '0.75rem', marginLeft: 4 }}>{blogPosts.length} posts</span>
+          <span style={{ color: '#97c459', fontSize: '0.75rem', marginLeft: 4 }}>{posts.length} posts</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           {saved && <span style={{ color: '#97c459', fontSize: '0.85rem', fontWeight: 600 }}>✓ Saved & deploying!</span>}
@@ -145,7 +156,7 @@ export default function CategoryManager() {
 
       <div style={{ display: 'grid', gridTemplateColumns: '240px 1fr', minHeight: 'calc(100vh - 52px)' }}>
 
-        {/* Sidebar: categories */}
+        {/* Sidebar */}
         <aside style={{ background: '#fff', borderRight: '1px solid #e8e8e4', padding: '20px 0', overflowY: 'auto' }}>
           <div style={{ padding: '0 16px 12px', fontSize: '0.72rem', fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             Filter by Category
@@ -156,10 +167,10 @@ export default function CategoryManager() {
             color: '#173404', fontFamily: 'inherit', display: 'flex', justifyContent: 'space-between',
           }}>
             <span>All Posts</span>
-            <span style={{ color: '#888', fontSize: '0.78rem' }}>{blogPosts.length}</span>
+            <span style={{ color: '#888', fontSize: '0.78rem' }}>{posts.length}</span>
           </button>
-          {blogCategories.map(cat => {
-            const color = CATEGORY_COLORS[cat] || CATEGORY_COLORS['Senior Health']
+          {categories.map(cat => {
+            const color = CATEGORY_COLORS[cat] || DEFAULT_COLOR
             return (
               <button key={cat} onClick={() => setFilterCat(cat)} style={{
                 width: '100%', padding: '10px 16px', border: 'none',
@@ -182,7 +193,7 @@ export default function CategoryManager() {
                 {changeCount} unsaved change{changeCount > 1 ? 's' : ''}
               </div>
               {Object.entries(changes).map(([slug, newCat]) => {
-                const post = blogPosts.find(p => p.slug === slug)
+                const post = posts.find(p => p.slug === slug)
                 if (!post) return null
                 return (
                   <div key={slug} style={{ fontSize: '0.72rem', color: '#666', marginBottom: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -203,16 +214,14 @@ export default function CategoryManager() {
           )}
         </aside>
 
-        {/* Main: post list */}
+        {/* Main */}
         <main style={{ padding: '20px 28px', overflowY: 'auto' }}>
-          {/* Search */}
           <div style={{ marginBottom: 20 }}>
             <input value={search} onChange={e => setSearch(e.target.value)}
               placeholder="Search posts by title..."
               style={{ ...inputStyle, width: '100%', maxWidth: 500 }} />
           </div>
 
-          {/* Post table */}
           <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e8e8e4', overflow: 'hidden' }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 200px 100px', padding: '12px 20px', borderBottom: '1px solid #e8e8e4', background: '#fafaf8' }}>
               <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Title</span>
@@ -223,13 +232,12 @@ export default function CategoryManager() {
             {filteredPosts.map(post => {
               const currentCat = getCategory(post)
               const isChanged = post.slug in changes
-              const color = CATEGORY_COLORS[currentCat] || CATEGORY_COLORS['Senior Health']
+              const color = CATEGORY_COLORS[currentCat] || DEFAULT_COLOR
               return (
                 <div key={post.slug} style={{
                   display: 'grid', gridTemplateColumns: '1fr 200px 100px', padding: '12px 20px',
                   borderBottom: '1px solid #f0f0ec', alignItems: 'center',
                   background: isChanged ? '#fffbeb' : 'transparent',
-                  transition: 'background 0.15s',
                 }}>
                   <div>
                     <div style={{ fontSize: '0.9rem', color: '#173404', fontWeight: isChanged ? 600 : 400, lineHeight: 1.4 }}>
@@ -241,9 +249,8 @@ export default function CategoryManager() {
                     <select
                       value={currentCat}
                       onChange={e => {
-                        const newCat = e.target.value as BlogCategory
+                        const newCat = e.target.value
                         if (newCat === post.category) {
-                          // Reverted to original — remove from changes
                           const next = { ...changes }
                           delete next[post.slug]
                           setChanges(next)
@@ -257,12 +264,10 @@ export default function CategoryManager() {
                         cursor: 'pointer', fontFamily: 'inherit', width: '100%',
                       }}
                     >
-                      {blogCategories.map(c => <option key={c} value={c}>{c}</option>)}
+                      {categories.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                   </div>
-                  <div style={{ fontSize: '0.78rem', color: '#888' }}>
-                    {post.date}
-                  </div>
+                  <div style={{ fontSize: '0.78rem', color: '#888' }}>{post.date}</div>
                 </div>
               )
             })}

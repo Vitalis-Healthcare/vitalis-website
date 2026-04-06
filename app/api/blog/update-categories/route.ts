@@ -3,19 +3,45 @@ import { NextRequest, NextResponse } from 'next/server'
 const GITHUB_OWNER = 'Vitalis-Healthcare'
 const GITHUB_REPO  = 'vitalis-website'
 const GITHUB_BRANCH = 'main'
-const FILE_PATH = 'lib/data/blog-posts.ts'
+
+const VALID_CATEGORIES = [
+  'Family Resources', 'Senior Health', 'Caregiver Tips',
+  'Maryland Home Care', 'Company News',
+  'Dementia & Memory Care', 'Post-Surgery & Recovery',
+]
+
+async function ghFetch(path: string, token: string) {
+  const res = await fetch(
+    `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}?ref=${GITHUB_BRANCH}`,
+    { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json' } }
+  )
+  if (!res.ok) return null
+  const data = await res.json()
+  return { content: Buffer.from(data.content, 'base64').toString('utf8'), sha: data.sha }
+}
+
+async function ghPut(path: string, content: string, sha: string, message: string, token: string) {
+  const res = await fetch(
+    `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`,
+    {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, content: Buffer.from(content).toString('base64'), sha, branch: GITHUB_BRANCH }),
+    }
+  )
+  return res.ok
+}
 
 export async function POST(req: NextRequest) {
   try {
     const { changes, pin } = await req.json()
 
-    // ── 1. Verify PIN ──────────────────────────────────────────────────
+    // ── Verify PIN ──────────────────────────────────────────────────────
     const correctPin = process.env.BLOG_ADMIN_PIN
     if (!correctPin || String(pin) !== String(correctPin)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // ── 2. Validate ────────────────────────────────────────────────────
     if (!changes || typeof changes !== 'object' || Object.keys(changes).length === 0) {
       return NextResponse.json({ error: 'No changes provided' }, { status: 400 })
     }
@@ -25,93 +51,74 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'GITHUB_TOKEN not configured' }, { status: 500 })
     }
 
-    // ── 3. Fetch current file from GitHub ──────────────────────────────
-    const fileRes = await fetch(
-      `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${FILE_PATH}?ref=${GITHUB_BRANCH}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: 'application/vnd.github.v3+json',
-        },
-      }
-    )
+    let mdUpdated = 0
+    let tsUpdated = 0
+    const errors: string[] = []
 
-    if (!fileRes.ok) {
-      return NextResponse.json({ error: 'Could not fetch blog-posts.ts from GitHub' }, { status: 500 })
-    }
-
-    const fileData = await fileRes.json()
-    const currentContent = Buffer.from(fileData.content, 'base64').toString('utf8')
-    const fileSha = fileData.sha
-
-    // ── 4. Apply category changes ──────────────────────────────────────
-    let updatedContent = currentContent
-    const validCategories = [
-      'Family Resources', 'Senior Health', 'Caregiver Tips',
-      'Maryland Home Care', 'Company News',
-      'Dementia & Memory Care', 'Post-Surgery & Recovery',
-    ]
-
-    let appliedCount = 0
+    // ── 1. Update markdown files in content/blog/ ───────────────────────
     for (const [slug, newCategory] of Object.entries(changes)) {
-      if (!validCategories.includes(newCategory as string)) continue
+      if (!VALID_CATEGORIES.includes(newCategory as string)) continue
 
-      // Find the slug's post block and update its category
-      // Pattern: slug: 'THE_SLUG' ... category: 'OLD_CATEGORY'
-      const slugEscaped = slug.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-      const pattern = new RegExp(
-        `(slug:\\s*'${slugEscaped}'[\\s\\S]*?category:\\s*')([^']+)(')`
-      )
+      const mdPath = `content/blog/${slug}.md`
+      const file = await ghFetch(mdPath, token)
 
-      if (pattern.test(updatedContent)) {
-        updatedContent = updatedContent.replace(pattern, `$1${newCategory}$3`)
-        appliedCount++
+      if (file) {
+        // Replace category in frontmatter
+        const updated = file.content.replace(
+          /^(category:\s*)"[^"]*"/m,
+          `$1"${newCategory}"`
+        )
+
+        if (updated !== file.content) {
+          const ok = await ghPut(mdPath, updated, file.sha, `blog: recategorize "${slug}" → ${newCategory}`, token)
+          if (ok) mdUpdated++
+          else errors.push(`Failed to update ${slug}.md`)
+        }
       }
     }
 
-    if (appliedCount === 0) {
-      return NextResponse.json({ error: 'No matching posts found to update' }, { status: 400 })
-    }
+    // ── 2. Update blog-posts.ts for legacy entries ──────────────────────
+    const tsPath = 'lib/data/blog-posts.ts'
+    const tsFile = await ghFetch(tsPath, token)
 
-    // ── 5. Push updated file to GitHub ─────────────────────────────────
-    const encoded = Buffer.from(updatedContent).toString('base64')
+    if (tsFile) {
+      let tsContent = tsFile.content
+      let tsChanged = false
 
-    const ghRes = await fetch(
-      `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${FILE_PATH}`,
-      {
-        method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: 'application/vnd.github.v3+json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: `blog: recategorize ${appliedCount} post${appliedCount > 1 ? 's' : ''}`,
-          content: encoded,
-          sha: fileSha,
-          branch: GITHUB_BRANCH,
-        }),
+      for (const [slug, newCategory] of Object.entries(changes)) {
+        if (!VALID_CATEGORIES.includes(newCategory as string)) continue
+
+        const slugEscaped = slug.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        const pattern = new RegExp(
+          `(slug:\\s*'${slugEscaped}'[\\s\\S]*?category:\\s*')([^']+)(')`
+        )
+
+        if (pattern.test(tsContent)) {
+          tsContent = tsContent.replace(pattern, `$1${newCategory}$3`)
+          tsChanged = true
+          tsUpdated++
+        }
       }
-    )
 
-    if (!ghRes.ok) {
-      const ghErr = await ghRes.json().catch(() => ({}))
-      console.error('GitHub API error:', ghErr)
-      return NextResponse.json(
-        { error: ghErr.message || 'GitHub API error' },
-        { status: 500 }
-      )
+      if (tsChanged) {
+        const ok = await ghPut(tsPath, tsContent, tsFile.sha, `blog: recategorize ${tsUpdated} post(s) in blog-posts.ts`, token)
+        if (!ok) errors.push('Failed to update blog-posts.ts')
+      }
     }
 
-    // ── 6. Trigger deploy ──────────────────────────────────────────────
+    // ── 3. Trigger deploy ───────────────────────────────────────────────
     const deployHook = process.env.VERCEL_DEPLOY_HOOK
     if (deployHook) {
-      await fetch(deployHook, { method: 'POST' }).catch(() => {
-        console.warn('Deploy hook failed — relying on GitHub integration')
-      })
+      await fetch(deployHook, { method: 'POST' }).catch(() => {})
     }
 
-    return NextResponse.json({ ok: true, appliedCount })
+    const total = mdUpdated + (tsUpdated > 0 ? 1 : 0)
+    return NextResponse.json({
+      ok: true,
+      mdUpdated,
+      tsUpdated,
+      errors: errors.length > 0 ? errors : undefined,
+    })
 
   } catch (err) {
     console.error('Category update error:', err)
