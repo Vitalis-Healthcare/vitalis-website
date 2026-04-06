@@ -3,6 +3,9 @@
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
   "installCommand": "npm install",
+  "redirects": [
+    { "source": "/forms", "destination": "/blog/forms", "permanent": true }
+  ],
   "headers": [
     {
       "source": "/(.*)",

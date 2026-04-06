@@ -2,6 +2,7 @@ import { MetadataRoute } from 'next'
 import { locations } from '@/lib/data/locations'
 import { conditions } from '@/lib/data/conditions'
 import { services } from '@/lib/data/services'
+import { getPostSlugs } from '@/lib/blog'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = 'https://www.vitalishealthcare.com'
@@ -37,5 +38,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.9,
   }))
 
-  return [...staticRoutes, ...serviceRoutes, ...locationRoutes, ...conditionRoutes]
+  const blogSlugs = getPostSlugs()
+  const blogRoutes: MetadataRoute.Sitemap = blogSlugs.map((slug) => ({
+    url: `${base}/blog/${slug}`,
+    lastModified: now,
+    changeFrequency: 'monthly',
+    priority: 0.7,
+  }))
+
+  return [...staticRoutes, ...serviceRoutes, ...locationRoutes, ...conditionRoutes, ...blogRoutes]
 }

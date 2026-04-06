@@ -75,7 +75,7 @@ export default function Footer() {
             ['Careers', '/careers'],
             ['Testimonials', '/testimonials'],
             ['Contact Us', '/contact'],
-            ['Patient Forms', '/forms'],
+            ['Patient Forms', '/blog/forms'],
           ].map(([label, href]) => (
             <Link key={label} href={href} style={{ display: 'block', fontSize: '13px', color: '#639922', marginBottom: '8px' }}>
               {label}
