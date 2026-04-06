@@ -9,6 +9,20 @@ export const metadata: Metadata = {
   title: 'Vitalis HealthCare | Home Care in Silver Spring, MD',
   description: 'Licensed, certified home care in Silver Spring, MD and across Maryland. Companion care, personal care & skilled nursing. MDH OHCQ licensed & regulated. VA & Medicaid accepted. Call 240.716.6874.',
   alternates: { canonical: '/' },
+  openGraph: {
+    type: 'website',
+    title: 'Vitalis HealthCare | Home Care in Silver Spring, MD',
+    description: 'Licensed, certified home care in Silver Spring, MD and across Maryland. Companion care, personal care & skilled nursing. MDH OHCQ licensed & regulated. VA & Medicaid accepted. Call 240.716.6874.',
+    url: 'https://www.vitalishealthcare.com',
+    siteName: 'Vitalis HealthCare Services',
+    locale: 'en_US',
+    images: [{ url: '/logo-full.png', width: 600, height: 200, alt: 'Vitalis HealthCare Services' }],
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Vitalis HealthCare | Home Care in Silver Spring, MD',
+    description: 'Licensed, certified home care in Silver Spring & Montgomery County, MD. Companion care, personal care & skilled nursing. Call 240.716.6874.',
+  },
 }
 
 const S = {

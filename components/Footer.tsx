@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="foot-grid">
         <div>
           <div style={{ marginBottom: '14px' }}>
-            <Image src="/logo-full.png" alt="Vitalis HealthCare Services" width={220} height={70} style={{ objectFit: 'contain', objectPosition: 'left' }} />
+            <Image src="/logo-full.png" alt="Vitalis HealthCare Services" title="Vitalis HealthCare Services — Licensed Home Care in Maryland" width={220} height={70} style={{ objectFit: 'contain', objectPosition: 'left' }} />
           </div>
           <p style={{ fontSize: '13px', color: '#639922', lineHeight: 1.8 }}>
             A family-owned, Maryland-licensed home care agency serving Silver Spring and communities across Montgomery County, Baltimore County, and Anne Arundel County. Our mission: improve quality of life for our clients in the comfort of their homes.
