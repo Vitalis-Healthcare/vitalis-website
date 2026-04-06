@@ -29,6 +29,23 @@ export const metadata: Metadata = {
     type: 'website',
     siteName: 'Vitalis HealthCare Services',
     locale: 'en_US',
+    title: 'Vitalis HealthCare | Home Care in Silver Spring, MD',
+    description:
+      'Licensed, certified home care in Silver Spring and Montgomery County, MD. Companion care, personal care & skilled nursing. MDH OHCQ licensed. Call 240.716.6874.',
+    images: [
+      {
+        url: '/logo-full.png',
+        width: 600,
+        height: 200,
+        alt: 'Vitalis HealthCare Services — Home Care in Silver Spring, MD',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Vitalis HealthCare | Home Care in Silver Spring, MD',
+    description:
+      'Licensed, certified home care in Silver Spring & Montgomery County, MD. Companion care, personal care & skilled nursing. Call 240.716.6874.',
   },
   robots: { index: true, follow: true },
 }

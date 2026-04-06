@@ -6,7 +6,7 @@ import Footer from '@/components/Footer'
 export const metadata: Metadata = {
   title: 'Caregiver Jobs in Silver Spring, MD | Vitalis HealthCare Careers',
   description: 'Join the Vitalis HealthCare team in Silver Spring, MD. Now hiring CNAs, CMTs, GNAs and HHAs. Competitive pay, real training, a team that treats you like family. Apply today.',
-  openGraph: {
+  alternates: { canonical: '/careers' },  openGraph: {
     title: 'Caregiver Jobs at Vitalis HealthCare — Silver Spring, MD',
     description: 'Now hiring CNAs, CMTs, GNAs and HHAs in Silver Spring and Montgomery County, MD. Apply at apply.vitalishealthcare.com.',
   },
@@ -17,7 +17,7 @@ const schema = {
   '@type': 'JobPosting',
   title: 'Home Health Aide / Caregiver',
   description: 'Vitalis HealthCare is hiring CNAs, CMTs, GNAs, and HHAs to serve clients across Silver Spring and Montgomery County, MD. Competitive pay, consistent scheduling, and a team that treats caregivers like professionals.',
-  hiringOrganization: {
+  alternates: { canonical: '/careers' },  hiringOrganization: {
     '@type': 'Organization',
     name: 'Vitalis HealthCare Services',
     sameAs: 'https://www.vitalishealthcare.com',

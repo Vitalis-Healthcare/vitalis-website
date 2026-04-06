@@ -7,7 +7,7 @@ import CTASection from '@/components/CTASection'
 export const metadata: Metadata = {
   title: 'Testimonials | Vitalis HealthCare Services',
   description: 'Real reviews from clients and caregivers who have experienced Vitalis HealthCare Services in Silver Spring, MD. See why families and caregivers trust Vitalis.',
-}
+  alternates: { canonical: '/testimonials' },}
 
 const clientTestimonials = [
   {

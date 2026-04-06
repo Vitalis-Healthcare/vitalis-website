@@ -9,7 +9,7 @@ import type { Post } from '@/lib/blog'
 export const metadata: Metadata = {
   title: 'Blog & Resources | Vitalis HealthCare Services',
   description: 'Health tips, caregiving advice, and resources for Maryland families and caregivers. Expert guidance from the Vitalis HealthCare team in Silver Spring, MD.',
-}
+  alternates: { canonical: '/blog' },}
 
 const categories = [
   { key: 'Family Resources',   label: 'For Families',        desc: 'Guidance for families navigating home care decisions',  color: { bg: '#eaf3de', text: '#27500a', border: '#97c459' } },
