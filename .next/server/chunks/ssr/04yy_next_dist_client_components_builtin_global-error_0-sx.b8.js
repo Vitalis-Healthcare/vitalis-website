@@ -1,3 +1,0 @@
-module.exports=[80905,(a,b,c)=>{let{createClientModuleProxy:d}=a.r(29538);a.n(d("[project]/Downloads/vitalis-website/node_modules/next/dist/client/components/builtin/global-error.js <module evaluation>"))},45164,(a,b,c)=>{let{createClientModuleProxy:d}=a.r(29538);a.n(d("[project]/Downloads/vitalis-website/node_modules/next/dist/client/components/builtin/global-error.js"))},77563,a=>{"use strict";a.i(80905);var b=a.i(45164);a.n(b)},11764,a=>{a.n(a.i(77563))}];
-
-//# sourceMappingURL=04yy_next_dist_client_components_builtin_global-error_0-sx.b8.js.map

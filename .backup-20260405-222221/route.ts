@@ -6,7 +6,7 @@ const GITHUB_BRANCH = 'main'
 
 export async function POST(req: NextRequest) {
   try {
-    const { title, date, dateFormatted, excerpt, category, content, slug, pin, metaTitle, metaDescription, focusKeyword, secondaryKeywords } = await req.json()
+    const { title, date, dateFormatted, excerpt, category, content, slug, pin } = await req.json()
 
     // ── 1. Verify PIN server-side ────────────────────────────────────────────
     const correctPin = process.env.BLOG_ADMIN_PIN
@@ -35,10 +35,6 @@ dateFormatted: "${dateFormatted}"
 excerpt: "${safeExcerpt}"
 category: "${category}"
 author: "Vitalis HealthCare"
-metaTitle: "${(metaTitle || '').replace(/"/g, '\\"')}"
-metaDescription: "${(metaDescription || '').replace(/"/g, '\\"')}"
-focusKeyword: "${(focusKeyword || '').replace(/"/g, '\\"')}"
-secondaryKeywords: "${(secondaryKeywords || '').replace(/"/g, '\\"')}"
 ---
 
 ${content.trim()}

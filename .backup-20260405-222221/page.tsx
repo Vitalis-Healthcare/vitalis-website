@@ -2,23 +2,20 @@ import type { Metadata } from 'next'
 import Nav from '@/components/Nav'
 import TrustBar from '@/components/TrustBar'
 import Footer from '@/components/Footer'
-import BlogSearch from '@/components/BlogSearch'
 import { getAllPosts } from '@/lib/blog'
 import type { Post } from '@/lib/blog'
 
 export const metadata: Metadata = {
   title: 'Blog & Resources | Vitalis HealthCare Services',
   description: 'Health tips, caregiving advice, and resources for Maryland families and caregivers. Expert guidance from the Vitalis HealthCare team in Silver Spring, MD.',
-  alternates: { canonical: '/blog' },}
+}
 
 const categories = [
-  { key: 'Family Resources',        label: 'For Families',             desc: 'Guidance for families navigating home care decisions',                color: { bg: '#eaf3de', text: '#27500a', border: '#97c459' } },
-  { key: 'Senior Health',           label: 'Senior Health',            desc: 'Health guidance, conditions, and wellness for older adults',           color: { bg: '#e6f1fb', text: '#185fa5', border: '#85b7eb' } },
-  { key: 'Caregiver Tips',          label: 'Caregiver Tips',           desc: 'Professional advice for caregivers and home health aides',            color: { bg: '#faeeda', text: '#854f0b', border: '#fac775' } },
-  { key: 'Maryland Home Care',      label: 'Maryland Home Care',       desc: 'Local resources, payment options, and Maryland-specific guides',      color: { bg: '#f3f9ec', text: '#3b6d11', border: '#c0dd97' } },
-  { key: 'Dementia & Memory Care',  label: 'Dementia & Memory Care',   desc: 'Understanding dementia, Alzheimer\'s, and memory care at home',      color: { bg: '#f3eefa', text: '#5b3a8c', border: '#c4a8e6' } },
-  { key: 'Post-Surgery & Recovery', label: 'Post-Surgery & Recovery',  desc: 'Recovering safely at home after surgery or hospitalization',          color: { bg: '#eef5f0', text: '#2d6e4f', border: '#8ec5a4' } },
-  { key: 'Company News',            label: 'Company News',             desc: 'Awards, announcements, and updates from Vitalis HealthCare',          color: { bg: '#fbeaf0', text: '#993556', border: '#f4c0d1' } },
+  { key: 'Family Resources',   label: 'For Families',        desc: 'Guidance for families navigating home care decisions',  color: { bg: '#eaf3de', text: '#27500a', border: '#97c459' } },
+  { key: 'Senior Health',      label: 'Senior Health',       desc: 'Health guidance, conditions, and wellness for older adults', color: { bg: '#e6f1fb', text: '#185fa5', border: '#85b7eb' } },
+  { key: 'Caregiver Tips',     label: 'Caregiver Tips',      desc: 'Professional advice for caregivers and home health aides', color: { bg: '#faeeda', text: '#854f0b', border: '#fac775' } },
+  { key: 'Maryland Home Care', label: 'Maryland Home Care',  desc: 'Local resources, payment options, and Maryland-specific guides', color: { bg: '#f3f9ec', text: '#3b6d11', border: '#c0dd97' } },
+  { key: 'Company News',       label: 'Company News',        desc: 'Awards, announcements, and updates from Vitalis HealthCare', color: { bg: '#fbeaf0', text: '#993556', border: '#f4c0d1' } },
 ]
 
 // Top posts — highest SEO value and most useful for families
@@ -81,11 +78,6 @@ export default async function BlogPage() {
     categories.map(c => [c.key, sorted.filter(p => p.category === c.key)])
   )
 
-  // Searchable post metadata (no contentHtml — keeps client bundle small)
-  const searchPosts = allPosts.map(({ slug, title, excerpt, category, dateFormatted }) => ({
-    slug, title, excerpt, category, dateFormatted,
-  }))
-
   return (
     <>
       <Nav />
@@ -113,7 +105,6 @@ export default async function BlogPage() {
               </a>
             ))}
           </div>
-          <BlogSearch posts={searchPosts} />
         </div>
       </section>
 

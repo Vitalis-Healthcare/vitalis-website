@@ -1,9 +1,0 @@
-{
-  "/_global-error/page": "/_global-error",
-  "/_not-found/page": "/_not-found",
-  "/conditions/[slug]/page": "/conditions/[slug]",
-  "/home-care/[slug]/page": "/home-care/[slug]",
-  "/page": "/",
-  "/robots.txt/route": "/robots.txt",
-  "/sitemap.xml/route": "/sitemap.xml"
-}
