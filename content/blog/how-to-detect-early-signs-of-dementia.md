@@ -3,7 +3,7 @@ title: "How to Detect Early Signs of Dementia"
 date: "2023-09-25"
 dateFormatted: "September 25, 2023"
 excerpt: "Dementia is an ailment characterized by a group of symptoms which reveal a cognitive impairment and decline such as memory loss, confusion, hallucination, poor coordination of..."
-category: "Senior Health"
+category: "Dementia & Memory Care"
 author: "Vitalis HealthCare"
 ---
 
