@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Nav from '@/components/Nav'
 import TrustBar from '@/components/TrustBar'
 import Footer from '@/components/Footer'
+import BlogSearch from '@/components/BlogSearch'
 import { getAllPosts } from '@/lib/blog'
 import type { Post } from '@/lib/blog'
 
@@ -78,6 +79,11 @@ export default async function BlogPage() {
     categories.map(c => [c.key, sorted.filter(p => p.category === c.key)])
   )
 
+  // Searchable post metadata (no contentHtml — keeps client bundle small)
+  const searchPosts = allPosts.map(({ slug, title, excerpt, category, dateFormatted }) => ({
+    slug, title, excerpt, category, dateFormatted,
+  }))
+
   return (
     <>
       <Nav />
@@ -105,6 +111,7 @@ export default async function BlogPage() {
               </a>
             ))}
           </div>
+          <BlogSearch posts={searchPosts} />
         </div>
       </section>
 
