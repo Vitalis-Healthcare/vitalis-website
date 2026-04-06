@@ -5,7 +5,7 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 /* ─────────────────────────────────────────────
    Vita Chat Widget
    Floating care advisor for Vitalis HealthCare
-   With inline lead capture card
+   With inline lead capture + session tracking
    ───────────────────────────────────────────── */
 
 interface Msg {
@@ -45,6 +45,16 @@ export default function ChatWidget() {
 
   const scrollRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
+  const sessionIdRef = useRef<string>('')
+
+  // Generate session ID on first open
+  useEffect(() => {
+    if (open && !sessionIdRef.current) {
+      sessionIdRef.current = typeof crypto !== 'undefined' && crypto.randomUUID
+        ? crypto.randomUUID()
+        : 'v-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10)
+    }
+  }, [open])
 
   // Scroll to bottom on new messages or lead card changes
   useEffect(() => {
@@ -95,7 +105,11 @@ export default function ChatWidget() {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: apiMessages }),
+        body: JSON.stringify({
+          messages: apiMessages,
+          sessionId: sessionIdRef.current,
+          page: typeof window !== 'undefined' ? window.location.pathname : '/',
+        }),
       })
 
       const data = await res.json()
@@ -162,6 +176,7 @@ export default function ChatWidget() {
           context: getConversationContext(),
           timestamp: new Date().toISOString(),
           page: typeof window !== 'undefined' ? window.location.pathname : '/',
+          sessionId: sessionIdRef.current,
         }),
       })
 

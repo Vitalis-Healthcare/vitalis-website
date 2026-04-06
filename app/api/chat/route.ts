@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createServiceClient } from '@/lib/supabase'
 
 /* ─────────────────────────────────────────────
    Vita – Vitalis HealthCare AI Care Advisor
    Server-side proxy to Anthropic Messages API
+   + Supabase conversation persistence
    ───────────────────────────────────────────── */
 
 const ANTHROPIC_API = 'https://api.anthropic.com/v1/messages'
@@ -111,9 +113,71 @@ IMPORTANT: Never guarantee coverage. Always say "may cover" or "may qualify." Re
 - Use a warm, conversational tone — like a knowledgeable friend, not a brochure.`
 
 
+/* ── Supabase persistence helpers ─────────────────────────────── */
+
+async function ensureSession(sessionId: string, pageUrl: string) {
+  try {
+    const sb = createServiceClient()
+    const { data } = await sb
+      .from('vita_sessions')
+      .select('id')
+      .eq('session_id', sessionId)
+      .single()
+
+    if (!data) {
+      await sb.from('vita_sessions').insert({
+        session_id: sessionId,
+        page_url: pageUrl,
+        msg_count: 0,
+      })
+    }
+  } catch {
+    // Supabase not configured — continue without persistence
+  }
+}
+
+async function saveMessages(sessionId: string, userContent: string, assistantContent: string) {
+  try {
+    const sb = createServiceClient()
+
+    // Save both messages
+    await sb.from('vita_messages').insert([
+      { session_id: sessionId, role: 'user', content: userContent },
+      { session_id: sessionId, role: 'assistant', content: assistantContent },
+    ])
+
+    // Update session metadata
+    await sb
+      .from('vita_sessions')
+      .update({
+        last_msg_at: new Date().toISOString(),
+        msg_count: await getMessageCount(sessionId),
+      })
+      .eq('session_id', sessionId)
+  } catch {
+    // Supabase not configured — continue silently
+  }
+}
+
+async function getMessageCount(sessionId: string): Promise<number> {
+  try {
+    const sb = createServiceClient()
+    const { count } = await sb
+      .from('vita_messages')
+      .select('*', { count: 'exact', head: true })
+      .eq('session_id', sessionId)
+    return count ?? 0
+  } catch {
+    return 0
+  }
+}
+
+
+/* ── Main handler ─────────────────────────────────────────────── */
+
 export async function POST(req: NextRequest) {
   try {
-    const { messages } = await req.json()
+    const { messages, sessionId, page } = await req.json()
 
     const apiKey = process.env.ANTHROPIC_API_KEY
     if (!apiKey) {
@@ -122,6 +186,14 @@ export async function POST(req: NextRequest) {
         { status: 500 },
       )
     }
+
+    // Ensure session exists in Supabase (non-blocking on failure)
+    if (sessionId) {
+      await ensureSession(sessionId, page || '/')
+    }
+
+    // Get the last user message for persistence
+    const lastUserMsg = messages[messages.length - 1]?.content || ''
 
     const res = await fetch(ANTHROPIC_API, {
       method: 'POST',
@@ -134,7 +206,7 @@ export async function POST(req: NextRequest) {
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1024,
         system: SYSTEM_PROMPT,
-        messages: messages.slice(-20), // Keep last 20 messages for context window management
+        messages: messages.slice(-20),
       }),
     })
 
@@ -153,7 +225,16 @@ export async function POST(req: NextRequest) {
       .map((b: { text: string }) => b.text)
       .join('\n')
 
-    return NextResponse.json({ reply: reply || 'I\'m sorry, I couldn\'t generate a response. Please try again or call us at 240.716.6874.' })
+    const finalReply = reply || 'I\'m sorry, I couldn\'t generate a response. Please try again or call us at 240.716.6874.'
+
+    // Persist messages to Supabase (non-blocking on failure)
+    if (sessionId) {
+      // Save the clean version (without [OFFER_CALLBACK] marker)
+      const cleanReply = finalReply.replace(/\[OFFER_CALLBACK\]/g, '').trim()
+      saveMessages(sessionId, lastUserMsg, cleanReply).catch(() => {})
+    }
+
+    return NextResponse.json({ reply: finalReply })
   } catch (err) {
     console.error('Chat route error:', err)
     return NextResponse.json(
