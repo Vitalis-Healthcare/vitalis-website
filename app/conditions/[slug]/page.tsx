@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const cond = getCondition(slug)
   if (!cond) return {}
   return {
-    title: cond.metaTitle,
+    title: { absolute: cond.metaTitle },
     description: cond.metaDescription,
     alternates: { canonical: `/conditions/${slug}` },
     openGraph: { title: cond.metaTitle, description: cond.metaDescription },

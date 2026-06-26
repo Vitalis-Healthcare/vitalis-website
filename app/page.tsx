@@ -6,7 +6,7 @@ import Footer from '@/components/Footer'
 import CTASection from '@/components/CTASection'
 
 export const metadata: Metadata = {
-  title: 'Vitalis HealthCare | Home Care in Silver Spring, MD',
+  title: { absolute: 'Vitalis HealthCare | Home Care in Silver Spring, MD' },
   description: 'Licensed, certified home care in Silver Spring, MD and across Maryland. Companion care, personal care & skilled nursing. MDH OHCQ licensed & regulated. VA & Medicaid accepted. Call 240.716.6874.',
   alternates: { canonical: '/' },
   openGraph: {

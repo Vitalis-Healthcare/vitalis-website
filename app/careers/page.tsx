@@ -4,7 +4,7 @@ import TrustBar from '@/components/TrustBar'
 import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
-  title: 'Caregiver Jobs in Silver Spring, MD | Vitalis HealthCare Careers',
+  title: { absolute: 'Caregiver Jobs in Silver Spring, MD | Vitalis HealthCare Careers' },
   description: 'Join the Vitalis HealthCare team in Silver Spring, MD. Now hiring CNAs, CMTs, GNAs and HHAs. Competitive pay, real training, a team that treats you like family. Apply today.',
   alternates: { canonical: '/careers' },  openGraph: {
     title: 'Caregiver Jobs at Vitalis HealthCare — Silver Spring, MD',

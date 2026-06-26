@@ -6,8 +6,8 @@ import Footer from '@/components/Footer'
 import CTASection from '@/components/CTASection'
 
 export const metadata: Metadata = {
-  title: 'About Us | Vitalis HealthCare Services',
-  description: 'Learn why Vitalis HealthCare was founded, who leads our team, and what drives us to provide compassionate, professional home care in Silver Spring and across Maryland.',
+  title: { absolute: 'About Vitalis HealthCare — Trusted Maryland Home Care Since 2014' },
+  description: 'Vitalis HealthCare was founded in 2014 in honor of the caregivers who cared for our founder\'s mother like family. Meet the Maryland home care team families trust. Call 240.716.6874.',
   alternates: { canonical: '/about' },  openGraph: {
     title: 'About Vitalis HealthCare Services',
     description: 'Founded in honor of the caregivers who cared for our founder\'s mother as if she were their own family. Meet the team behind Vitalis.',

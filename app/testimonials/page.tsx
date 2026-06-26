@@ -5,8 +5,8 @@ import Footer from '@/components/Footer'
 import CTASection from '@/components/CTASection'
 
 export const metadata: Metadata = {
-  title: 'Testimonials | Vitalis HealthCare Services',
-  description: 'Real reviews from clients and caregivers who have experienced Vitalis HealthCare Services in Silver Spring, MD. See why families and caregivers trust Vitalis.',
+  title: { absolute: 'Vitalis HealthCare Reviews — What MD Families & Caregivers Say' },
+  description: 'Real 5-star reviews from Maryland families and caregivers who trust Vitalis HealthCare — plus our Best of Home Care awards. Honest words, real people, Silver Spring, MD.',
   alternates: { canonical: '/testimonials' },}
 
 const clientTestimonials = [
