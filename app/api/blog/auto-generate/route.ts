@@ -7,10 +7,11 @@ export const dynamic = 'force-dynamic'
 
 const ANTHROPIC_API = 'https://api.anthropic.com/v1/messages'
 
-// Pinned, swappable generation model. Defaults to the string already proven on
-// this account; override with BLOG_GEN_MODEL in Vercel to upgrade without a code
-// change. (Pitfall: model strings age silently — keep this overridable.)
-const MODEL = process.env.BLOG_GEN_MODEL || 'claude-sonnet-4-20250514'
+// Pinned, swappable generation model. Defaults to the current Sonnet
+// (claude-sonnet-4-6). Override with BLOG_GEN_MODEL in Vercel to upgrade (e.g.
+// claude-opus-4-8) without a code change. NOTE: claude-sonnet-4-20250514 was
+// retired 2026-04-20 — do not use it. (Pitfall: model strings age silently.)
+const MODEL = process.env.BLOG_GEN_MODEL || 'claude-sonnet-4-6'
 const USE_WEBSEARCH = (process.env.BLOG_GEN_WEBSEARCH || '1') === '1'
 
 const CATEGORIES = [
