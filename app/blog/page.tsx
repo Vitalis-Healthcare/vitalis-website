@@ -5,21 +5,12 @@ import Footer from '@/components/Footer'
 import BlogSearch from '@/components/BlogSearch'
 import { getAllPosts } from '@/lib/blog'
 import type { Post } from '@/lib/blog'
+import { categories, PostCard } from '@/components/blog/PostCard'
 
 export const metadata: Metadata = {
   title: { absolute: 'Blog & Resources | Vitalis HealthCare Services' },
   description: 'Health tips, caregiving advice, and resources for Maryland families and caregivers. Expert guidance from the Vitalis HealthCare team in Silver Spring, MD.',
   alternates: { canonical: '/blog' },}
-
-const categories = [
-  { key: 'Family Resources',        label: 'For Families',             desc: 'Guidance for families navigating home care decisions',                color: { bg: '#eaf3de', text: '#27500a', border: '#97c459' } },
-  { key: 'Senior Health',           label: 'Senior Health',            desc: 'Health guidance, conditions, and wellness for older adults',           color: { bg: '#e6f1fb', text: '#185fa5', border: '#85b7eb' } },
-  { key: 'Caregiver Tips',          label: 'Caregiver Tips',           desc: 'Professional advice for caregivers and home health aides',            color: { bg: '#faeeda', text: '#854f0b', border: '#fac775' } },
-  { key: 'Maryland Home Care',      label: 'Maryland Home Care',       desc: 'Local resources, payment options, and Maryland-specific guides',      color: { bg: '#f3f9ec', text: '#3b6d11', border: '#c0dd97' } },
-  { key: 'Dementia & Memory Care',  label: 'Dementia & Memory Care',   desc: 'Understanding dementia, Alzheimer\'s, and memory care at home',      color: { bg: '#f3eefa', text: '#5b3a8c', border: '#c4a8e6' } },
-  { key: 'Post-Surgery & Recovery', label: 'Post-Surgery & Recovery',  desc: 'Recovering safely at home after surgery or hospitalization',          color: { bg: '#eef5f0', text: '#2d6e4f', border: '#8ec5a4' } },
-  { key: 'Company News',            label: 'Company News',             desc: 'Awards, announcements, and updates from Vitalis HealthCare',          color: { bg: '#fbeaf0', text: '#993556', border: '#f4c0d1' } },
-]
 
 // Top posts — highest SEO value and most useful for families
 const featuredSlugs = [
@@ -30,40 +21,6 @@ const featuredSlugs = [
   'how-to-detect-early-signs-of-dementia',
   'vitalis-healthcare-bags-best-of-homecare-award-third-year-in-a-row',
 ]
-
-function PostCard({ post, size = 'normal' }: { post: Post; size?: 'large' | 'normal' }) {
-  const cat = categories.find(c => c.key === post.category)
-  const color = cat?.color ?? { bg: '#eaf3de', text: '#27500a', border: '#97c459' }
-  return (
-    <a href={`/blog/${post.slug}`} style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <div style={{
-        background: '#fff',
-        borderRadius: '14px',
-        border: '1px solid var(--border)',
-        padding: size === 'large' ? '28px 26px' : '20px 20px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '10px',
-        height: '100%',
-        transition: 'border-color .15s',
-      }}>
-        <span style={{ display: 'inline-block', background: color.bg, color: color.text, border: `1px solid ${color.border}`, borderRadius: '20px', padding: '3px 12px', fontSize: '11px', fontWeight: 500, alignSelf: 'flex-start' }}>
-          {post.category}
-        </span>
-        <h3 style={{ fontFamily: 'var(--font-lora),Georgia,serif', fontSize: size === 'large' ? '19px' : '15px', fontWeight: 500, color: 'var(--text)', lineHeight: 1.35, margin: 0 }}>
-          {post.title}
-        </h3>
-        <p style={{ fontSize: '13px', lineHeight: 1.65, color: 'var(--muted)', flex: 1, margin: 0 }}>
-          {post.excerpt.slice(0, size === 'large' ? 140 : 110)}{post.excerpt.length > (size === 'large' ? 140 : 110) ? '...' : ''}
-        </p>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '10px', borderTop: '1px solid var(--border)', marginTop: 'auto' }}>
-          <span style={{ fontSize: '12px', color: 'var(--muted)' }}>{post.dateFormatted}</span>
-          <span style={{ fontSize: '13px', fontWeight: 500, color: 'var(--g-bd)' }}>Read →</span>
-        </div>
-      </div>
-    </a>
-  )
-}
 
 export default async function BlogPage() {
   const allPosts = await getAllPosts()
@@ -127,6 +84,23 @@ export default async function BlogPage() {
           <p style={{ fontSize: '14px', color: 'var(--muted)', marginBottom: '28px' }}>The articles families and caregivers come back to most.</p>
           <div className="grid-3col" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '20px' }}>
             {featured.map(post => <PostCard key={post.slug} post={post} size="large" />)}
+          </div>
+        </div>
+      </section>
+
+      {/* Latest */}
+      <section className="sec">
+        <div className="inner-wide">
+          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '28px', flexWrap: 'wrap', gap: '12px' }}>
+            <div>
+              <p className="sec-label">Fresh off the press</p>
+              <h2 className="sec-h" style={{ marginBottom: '4px' }}>Latest from our blog</h2>
+              <p style={{ fontSize: '14px', color: 'var(--muted)', margin: 0 }}>The newest articles on our site.</p>
+            </div>
+            <a href="/blog/all" style={{ fontSize: '14px', fontWeight: 500, color: 'var(--g-bd)', textDecoration: 'none', whiteSpace: 'nowrap' }}>See all posts &rarr;</a>
+          </div>
+          <div className="grid-3col" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '16px' }}>
+            {sorted.slice(0, 6).map(post => <PostCard key={post.slug} post={post} />)}
           </div>
         </div>
       </section>
