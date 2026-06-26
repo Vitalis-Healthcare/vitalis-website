@@ -1,3 +1,4 @@
+// Vitalis blog automation — cron engine (v0.5.x). Build re-triggered as v0.5.1.
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase'
 
