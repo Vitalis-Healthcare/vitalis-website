@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const loc = getLocation(slug)
   if (!loc) return {}
   return {
-    title: loc.metaTitle,
+    title: { absolute: loc.metaTitle },
     description: loc.metaDescription,
     alternates: { canonical: `/home-care/${slug}` },
     openGraph: { title: loc.metaTitle, description: loc.metaDescription },

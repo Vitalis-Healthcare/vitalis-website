@@ -7,7 +7,7 @@ import { getAllPosts } from '@/lib/blog'
 import type { Post } from '@/lib/blog'
 
 export const metadata: Metadata = {
-  title: 'Blog & Resources | Vitalis HealthCare Services',
+  title: { absolute: 'Blog & Resources | Vitalis HealthCare Services' },
   description: 'Health tips, caregiving advice, and resources for Maryland families and caregivers. Expert guidance from the Vitalis HealthCare team in Silver Spring, MD.',
   alternates: { canonical: '/blog' },}
 
