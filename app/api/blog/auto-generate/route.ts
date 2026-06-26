@@ -93,16 +93,16 @@ SEO RULES:
 - Weave in local signals naturally: Silver Spring, Rockville, Gaithersburg, Germantown, Takoma Park, Montgomery County, Maryland.
 - End the body with, in this order: (1) a "## Related Articles" section with 2–3 markdown links chosen ONLY from the provided blog URL list, (2) a "## Related Services" section with 2–3 links chosen ONLY from the provided service/condition/location URL list, (3) the exact CTA line provided, then (4) the exact trust footer provided. Reproduce the CTA and footer character-for-character.
 
-OUTPUT: Return ONLY a single minified-or-pretty JSON object and nothing else — no markdown fences, no commentary. Schema:
-{
-  "postTitle": string,
-  "excerpt": string,            // one sentence for the blog index
-  "metaTitle": string,          // <=60 chars, includes focus keyword
-  "metaDescription": string,    // <=160 chars, includes focus keyword
-  "focusKeyword": string,       // 2-4 words
-  "secondaryKeywords": string,  // comma-separated
-  "body": string                // full markdown article
-}`
+OUTPUT: Return the article in EXACTLY this layout and nothing else — no JSON, no code fences, no commentary. First the six header lines below (each is a label, a colon, then its value on the SAME single line), then a line containing only ===BODY===, then the full markdown article on the lines after it:
+
+POST_TITLE: the post title here
+EXCERPT: one sentence for the blog index
+META_TITLE: <=60 characters, includes the exact focus keyword
+META_DESCRIPTION: <=160 characters, includes the exact focus keyword
+FOCUS_KEYWORD: 2-4 words
+SECONDARY_KEYWORDS: comma, separated, related terms
+===BODY===
+The full markdown article goes here. Write naturally — apostrophes, quotes, dashes, and line breaks are all fine, because everything after ===BODY=== is plain text, not JSON.`
 
 function buildUserPrompt(row: {
   topic_title: string
@@ -138,7 +138,7 @@ ${CTA_BLOCK}
 Use this exact trust footer (verbatim) as item 4 of the ending:
 ${TRUST_FOOTER}
 
-Return ONLY the JSON object described in your instructions.`
+Return ONLY the labeled header lines followed by ===BODY=== and the markdown article, exactly as described in your instructions — no JSON, no code fences.`
 }
 
 // ── Anthropic call ──────────────────────────────────────────────────────────
@@ -192,15 +192,36 @@ async function generate(
     .join('\n')
     .trim()
 
-  // Extract the JSON object (model may add stray characters around it).
-  const start = text.indexOf('{')
-  const end = text.lastIndexOf('}')
-  if (start === -1 || end === -1 || end <= start) {
-    throw new Error('No JSON object found in model output.')
+  return parseDraft(text)
+}
+
+// Parse the labeled-header + ===BODY=== layout. Robust to apostrophes, quotes,
+// and line breaks in the body, which is what broke the old JSON envelope.
+function parseDraft(text: string): Draft {
+  const marker = '===BODY==='
+  const idx = text.indexOf(marker)
+  if (idx === -1) {
+    throw new Error('Model output did not contain the ===BODY=== marker.')
   }
-  const json = text.slice(start, end + 1)
-  const parsed = JSON.parse(json) as Draft
-  return parsed
+  const header = text.slice(0, idx)
+  const body = text.slice(idx + marker.length).replace(/^[ \t]*\r?\n/, '').trim()
+  const field = (label: string): string => {
+    const m = header.match(new RegExp('^' + label + ':[ \\t]*(.*)$', 'm'))
+    return m ? m[1].trim() : ''
+  }
+  const draft: Draft = {
+    postTitle: field('POST_TITLE'),
+    excerpt: field('EXCERPT'),
+    metaTitle: field('META_TITLE'),
+    metaDescription: field('META_DESCRIPTION'),
+    focusKeyword: field('FOCUS_KEYWORD'),
+    secondaryKeywords: field('SECONDARY_KEYWORDS'),
+    body,
+  }
+  if (!draft.postTitle || draft.body.length < 200) {
+    throw new Error('Model output was incomplete (missing title or body).')
+  }
+  return draft
 }
 
 // ── validator ───────────────────────────────────────────────────────────────
