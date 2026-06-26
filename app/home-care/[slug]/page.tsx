@@ -31,7 +31,7 @@ export default async function LocationPage({ params }: Props) {
   const loc = getLocation(slug)
   if (!loc) notFound()
 
-  const { city, state, county, bchd, intro, countryContext, neighborhoods, stats, faqs, testimonial, relatedLocations } = loc
+  const { city, state, county, bchd, tagline, intro, countryContext, neighborhoods, stats, faqs, testimonial, relatedLocations } = loc
 
   const trustItems = [
     { label: 'MDH OHCQ Licensed', value: 'RSA Level 3 · License #3879R' },
@@ -48,7 +48,7 @@ export default async function LocationPage({ params }: Props) {
     '@context': 'https://schema.org',
     '@graph': [
       {
-        '@type': ['HomeAndConstructionBusiness', 'MedicalBusiness', 'LocalBusiness'],
+        '@type': ['MedicalBusiness', 'LocalBusiness'],
         name: 'Vitalis HealthCare Services',
         url: `https://www.vitalishealthcare.com/home-care/${slug}`,
         telephone: '+12407166874',
@@ -57,6 +57,14 @@ export default async function LocationPage({ params }: Props) {
         areaServed: [city, county, 'Maryland'],
         openingHours: ['Mo-Fr 09:00-17:00', 'Sa 10:00-16:00'],
         hasCredential: ['OHCQ License #3879R', 'Maryland Dept. of Health OHCQ License #3879R — RSA Level 3', 'CareScout Approved Provider'],
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.vitalishealthcare.com/' },
+          { '@type': 'ListItem', position: 2, name: 'Locations', item: 'https://www.vitalishealthcare.com/home-care' },
+          { '@type': 'ListItem', position: 3, name: `Home Care in ${city}, ${state}`, item: `https://www.vitalishealthcare.com/home-care/${slug}` },
+        ],
       },
       {
         '@type': 'FAQPage',
@@ -83,12 +91,11 @@ export default async function LocationPage({ params }: Props) {
             Home Care · {city}, {state} · {county}
           </div>
           <h1 style={{ fontFamily: 'var(--font-lora),Georgia,serif', fontSize: '42px', fontWeight: 500, lineHeight: 1.2, color: 'var(--text)', marginBottom: '18px' }}>
-            Trusted home care in{' '}
-            <em style={{ fontStyle: 'italic', color: 'var(--g-bd)' }}>{city}, {state}</em>{' '}
-            — for families who want the very best.
+            Home Care in{' '}
+            <em style={{ fontStyle: 'italic', color: 'var(--g-bd)' }}>{city}, {state}</em>
           </h1>
           <p style={{ fontSize: '16px', lineHeight: 1.8, color: 'var(--muted)', marginBottom: '28px', maxWidth: '640px' }}>
-            {intro.slice(0, 220)}...
+            {tagline}
           </p>
           <div style={{ display: 'flex', gap: '14px', marginBottom: '28px', flexWrap: 'wrap' }}>
             <a href="https://getcare.vitalishealthcare.com" className="btn-primary">Talk to Us Today — It&apos;s Free</a>
