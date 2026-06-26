@@ -1,4 +1,4 @@
-// Vitalis blog automation — cron engine (v0.5.x). Build re-triggered as v0.5.1.
+// Vitalis blog automation — cron engine (v0.5.x). Diagnostic build v0.5.2.
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase'
 
@@ -111,6 +111,8 @@ async function runCron() {
 
   const staged: StagedItem[] = []
   const published: PublishedItem[] = []
+  const genErrs: string[] = []
+  const pubErrs: string[] = []
   let genAttempts = 0
   let pubAttempts = 0
 
@@ -132,7 +134,9 @@ async function runCron() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pin, position: row.position, websearch: webSearch }),
       })
-      const data = await res.json().catch(() => ({}))
+      const text = await res.text()
+      let data: { draft?: { title?: string }; valid?: boolean; error?: string } = {}
+      try { data = JSON.parse(text) } catch { /* non-JSON response */ }
       if (res.ok) {
         staged.push({
           position: row.position,
@@ -140,9 +144,11 @@ async function runCron() {
           publish_date: row.publish_date,
           valid: !!data.valid,
         })
+      } else {
+        genErrs.push(`p${row.position}:${res.status} ${(data.error || text.slice(0, 90)).replace(/\s+/g, ' ').trim()}`)
       }
-    } catch {
-      // generation failures already mark the row 'failed' inside auto-generate
+    } catch (e) {
+      genErrs.push(`p${row.position}:threw ${(e instanceof Error ? e.message : 'error').slice(0, 90)}`)
     }
   }
 
@@ -163,24 +169,31 @@ async function runCron() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pin, position: row.position }),
       })
-      const data = await res.json().catch(() => ({}))
+      const text = await res.text()
+      let data: { url?: string; error?: string } = {}
+      try { data = JSON.parse(text) } catch { /* non-JSON response */ }
       if (res.ok) {
-        published.push({ position: row.position, title: row.topic_title, url: data.url })
+        published.push({ position: row.position, title: row.topic_title, url: data.url || '' })
+      } else {
+        pubErrs.push(`p${row.position}:${res.status} ${(data.error || text.slice(0, 90)).replace(/\s+/g, ' ').trim()}`)
       }
-    } catch {
-      // leave the row in review; next run retries
+    } catch (e) {
+      pubErrs.push(`p${row.position}:threw ${(e instanceof Error ? e.message : 'error').slice(0, 90)}`)
     }
   }
 
   await sendDigest(staged, published)
 
-  const note = `generated ${staged.length}/${genAttempts}, published ${published.length}/${pubAttempts}`
+  let note = `generated ${staged.length}/${genAttempts}, published ${published.length}/${pubAttempts}`
+  if (genErrs.length) note += ` || gen ${genErrs.join(' ; ')}`
+  if (pubErrs.length) note += ` || pub ${pubErrs.join(' ; ')}`
+  note = note.slice(0, 480)
   await supabase
     .from('blog_settings')
     .update({ last_run_at: new Date().toISOString(), last_run_note: note })
     .eq('id', 1)
 
-  return { ok: true, staged, published, note }
+  return { ok: true, staged, published, genErrs, pubErrs, note }
 }
 
 // Vercel cron hits GET. If CRON_SECRET is set, require it.
