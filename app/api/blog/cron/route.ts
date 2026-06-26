@@ -1,6 +1,8 @@
-// Vitalis blog automation — cron engine (v0.5.x). Diagnostic build v0.5.2.
+// Vitalis blog automation — cron engine (v0.5.x). v0.5.3: in-process invocation.
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase'
+import { POST as runAutoGenerate } from '@/app/api/blog/auto-generate/route'
+import { POST as runPublish } from '@/app/api/blog/publish/route'
 
 export const runtime = 'nodejs'
 export const maxDuration = 300
@@ -24,6 +26,15 @@ function fmtDate(d: string | null): string {
 
 function esc(s: string): string {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+}
+
+// Build an in-process request for an internal route handler.
+function internalRequest(path: string, body: unknown): NextRequest {
+  return new NextRequest(`${SITE_URL}${path}`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(body),
+  })
 }
 
 type StagedItem = { position: number; title: string; publish_date: string | null; valid: boolean }
@@ -116,7 +127,7 @@ async function runCron() {
   let genAttempts = 0
   let pubAttempts = 0
 
-  // ── Generate phase: stage drafts that are within the veto window ──────────
+  // ── Generate phase: stage drafts within the veto window (in-process call) ──
   const { data: toGen } = await supabase
     .from('blog_queue')
     .select('position, topic_title, publish_date')
@@ -129,14 +140,12 @@ async function runCron() {
   for (const row of toGen || []) {
     genAttempts++
     try {
-      const res = await fetch(`${SITE_URL}/api/blog/auto-generate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin, position: row.position, websearch: webSearch }),
-      })
+      const res = await runAutoGenerate(
+        internalRequest('/api/blog/auto-generate', { pin, position: row.position, websearch: webSearch })
+      )
       const text = await res.text()
       let data: { draft?: { title?: string }; valid?: boolean; error?: string } = {}
-      try { data = JSON.parse(text) } catch { /* non-JSON response */ }
+      try { data = JSON.parse(text) } catch { /* non-JSON */ }
       if (res.ok) {
         staged.push({
           position: row.position,
@@ -164,14 +173,12 @@ async function runCron() {
   for (const row of toPub || []) {
     pubAttempts++
     try {
-      const res = await fetch(`${SITE_URL}/api/blog/publish`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin, position: row.position }),
-      })
+      const res = await runPublish(
+        internalRequest('/api/blog/publish', { pin, position: row.position })
+      )
       const text = await res.text()
       let data: { url?: string; error?: string } = {}
-      try { data = JSON.parse(text) } catch { /* non-JSON response */ }
+      try { data = JSON.parse(text) } catch { /* non-JSON */ }
       if (res.ok) {
         published.push({ position: row.position, title: row.topic_title, url: data.url || '' })
       } else {
