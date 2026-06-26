@@ -89,6 +89,8 @@ export default function QueueViewer({
   const [generatingPos, setGeneratingPos] = useState<number | null>(null)
   const [genError, setGenError] = useState('')
   const [result, setResult] = useState<GenResult | null>(null)
+  const [publishingPos, setPublishingPos] = useState<number | null>(null)
+  const [published, setPublished] = useState<{ position: number; url: string } | null>(null)
 
   const weeks = useMemo(() => {
     const w: Record<number, QueueRow[]> = {}
@@ -131,6 +133,45 @@ export default function QueueViewer({
       if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' })
     } else {
       setGenError('No draft is stored for this row yet.')
+    }
+  }
+
+  async function publish(position: number) {
+    const d = localDrafts[position]
+    if (!d || !d.valid) {
+      setGenError('Only drafts that pass all checks can be published.')
+      return
+    }
+    if (typeof window !== 'undefined') {
+      const ok = window.confirm(
+        `Publish "${d.draft.title}" to the live blog now? It will appear at vitalishealthcare.com within a minute or two.`
+      )
+      if (!ok) return
+    }
+    setPublishingPos(position)
+    setGenError('')
+    setPublished(null)
+    try {
+      const res = await fetch('/api/blog/publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin, position }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setGenError(data.error || 'Publish failed.')
+        return
+      }
+      setPublished({ position, url: data.url })
+      setResult(null)
+      setLocalRows((prev) =>
+        prev.map((r) => (r.position === position ? { ...r, status: 'published', slug: data.slug } : r))
+      )
+      if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' })
+    } catch {
+      setGenError('Network error during publish. Check the live blog before retrying.')
+    } finally {
+      setPublishingPos(null)
     }
   }
 
@@ -264,6 +305,26 @@ export default function QueueViewer({
             )}
           </div>
 
+          {published && (
+            <div
+              style={{
+                background: '#eaf3de',
+                color: '#27500a',
+                border: '1px solid #97c459',
+                borderRadius: 10,
+                padding: '12px 16px',
+                fontSize: 13,
+                marginBottom: 16,
+              }}
+            >
+              Published position {published.position}. It will be live shortly at{' '}
+              <a href={published.url} target="_blank" rel="noreferrer" style={{ color: '#27500a', fontWeight: 700 }}>
+                {published.url}
+              </a>
+              .
+            </div>
+          )}
+
           {genError && (
             <div
               style={{
@@ -347,10 +408,28 @@ export default function QueueViewer({
 
                           {!busy && r.status === 'review' && (
                             <>
-                              <button onClick={() => view(r.position)} style={smallBtn(true, false)}>
+                              <button onClick={() => view(r.position)} style={smallBtn(false, false)}>
                                 View draft
                               </button>
-                              <button onClick={() => generate(r.position)} disabled={anyBusy} style={smallBtn(false, anyBusy)}>
+                              {localDrafts[r.position]?.valid && (
+                                <button
+                                  onClick={() => publish(r.position)}
+                                  disabled={anyBusy || publishingPos !== null}
+                                  style={{
+                                    ...smallBtn(true, anyBusy || publishingPos !== null),
+                                    background:
+                                      anyBusy || publishingPos !== null ? '#e5e7eb' : GREEN_BRIGHT,
+                                    color: anyBusy || publishingPos !== null ? '#9ca3af' : '#1a3a0f',
+                                  }}
+                                >
+                                  {publishingPos === r.position ? 'Publishing…' : 'Publish'}
+                                </button>
+                              )}
+                              <button
+                                onClick={() => generate(r.position)}
+                                disabled={anyBusy || publishingPos !== null}
+                                style={smallBtn(false, anyBusy || publishingPos !== null)}
+                              >
                                 Regenerate
                               </button>
                             </>
