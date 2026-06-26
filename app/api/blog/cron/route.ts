@@ -1,4 +1,4 @@
-// Vitalis blog automation — cron engine (v0.5.x). v0.5.3: in-process invocation.
+// Vitalis blog automation — cron engine (v0.5.x). v0.5.5: verified-domain email + status.
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase'
 import { POST as runAutoGenerate } from '@/app/api/blog/auto-generate/route'
@@ -40,12 +40,13 @@ function internalRequest(path: string, body: unknown): NextRequest {
 type StagedItem = { position: number; title: string; publish_date: string | null; valid: boolean }
 type PublishedItem = { position: number; title: string; url: string }
 
-// Soft-fail digest email — never throws, never blocks the run.
-async function sendDigest(staged: StagedItem[], published: PublishedItem[]) {
+// Soft-fail digest email — never throws. Returns a short status for the run note.
+async function sendDigest(staged: StagedItem[], published: PublishedItem[]): Promise<string> {
   const key = process.env.RESEND_API_KEY
-  if (!key) return
-  if (staged.length === 0 && published.length === 0) return
+  if (!key) return 'no RESEND_API_KEY'
+  if (staged.length === 0 && published.length === 0) return ''
 
+  const from = process.env.BLOG_FROM_EMAIL || 'Vitalis Blog <notifications@vitalishealthcare.com>'
   const to = process.env.BLOG_NOTIFY_EMAIL || 'info@vitalishealthcare.com'
   const dash = `${SITE_URL}/admin/blog/queue`
 
@@ -88,18 +89,23 @@ async function sendDigest(staged: StagedItem[], published: PublishedItem[]) {
   const subject = `Vitalis blog: ${staged.length} staged, ${published.length} published`
 
   try {
-    await fetch('https://api.resend.com/emails', {
+    const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        from: 'Vitalis Blog <onboarding@resend.dev>',
+        from,
         to: [to],
         subject,
         html,
       }),
     })
+    const txt = await res.text()
+    if (!res.ok) {
+      return `error ${res.status} ${txt.slice(0, 140).replace(/\s+/g, ' ').trim()}`
+    }
+    return 'sent'
   } catch (e) {
-    console.error('blog digest email error:', e instanceof Error ? e.message : e)
+    return `threw ${(e instanceof Error ? e.message : 'error').slice(0, 100)}`
   }
 }
 
@@ -189,12 +195,13 @@ async function runCron() {
     }
   }
 
-  await sendDigest(staged, published)
+  const emailStatus = await sendDigest(staged, published)
 
   let note = `generated ${staged.length}/${genAttempts}, published ${published.length}/${pubAttempts}`
   if (genErrs.length) note += ` || gen ${genErrs.join(' ; ')}`
   if (pubErrs.length) note += ` || pub ${pubErrs.join(' ; ')}`
-  note = note.slice(0, 480)
+  if (emailStatus) note += ` || email ${emailStatus}`
+  note = note.slice(0, 600)
   await supabase
     .from('blog_settings')
     .update({ last_run_at: new Date().toISOString(), last_run_note: note })
