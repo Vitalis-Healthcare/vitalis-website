@@ -34,9 +34,19 @@ export type StoredDraft = {
   }
 }
 
+export type Settings = {
+  armed: boolean
+  start_monday: string | null
+  veto_days: number
+  web_search: boolean
+  last_run_at: string | null
+  last_run_note: string | null
+}
+
 export default async function QueuePage() {
   let rows: QueueRow[] = []
   let drafts: StoredDraft[] = []
+  let settings: Settings | null = null
   let loadError = ''
 
   try {
@@ -86,5 +96,17 @@ export default async function QueuePage() {
     loadError = e instanceof Error ? e.message : 'Failed to load the queue.'
   }
 
-  return <QueueViewer rows={rows} drafts={drafts} loadError={loadError} />
+  try {
+    const supabase = createServiceClient()
+    const { data: sData } = await supabase
+      .from('blog_settings')
+      .select('armed, start_monday, veto_days, web_search, last_run_at, last_run_note')
+      .eq('id', 1)
+      .maybeSingle()
+    if (sData) settings = sData as Settings
+  } catch {
+    // settings are optional for rendering the queue
+  }
+
+  return <QueueViewer rows={rows} drafts={drafts} settings={settings} loadError={loadError} />
 }

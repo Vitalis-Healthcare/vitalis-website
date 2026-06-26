@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState, type CSSProperties } from 'react'
-import type { QueueRow, StoredDraft } from './page'
+import type { QueueRow, StoredDraft, Settings } from './page'
 
 const GREEN_DARK = '#2D5A1B'
 const GREEN_BRIGHT = '#7AB52A'
@@ -23,6 +23,7 @@ const STATUS_COLOR: Record<string, { bg: string; text: string }> = {
   published: { bg: '#eaf3de', text: '#27500a' },
   skipped: { bg: '#f1f1f1', text: '#777777' },
   failed: { bg: '#fbeaea', text: '#a3261f' },
+  held: { bg: '#fdf0e2', text: '#9a5b12' },
 }
 
 type Check = { check: string; pass: boolean; detail: string }
@@ -66,13 +67,23 @@ const smallBtn = (primary: boolean, disabled: boolean): CSSProperties => ({
   whiteSpace: 'nowrap',
 })
 
+function nextMonday(): string {
+  const d = new Date()
+  const day = d.getUTCDay() // 0 Sun .. 6 Sat
+  const delta = ((8 - day) % 7) || 7 // always the upcoming Monday, never today
+  d.setUTCDate(d.getUTCDate() + delta)
+  return d.toISOString().slice(0, 10)
+}
+
 export default function QueueViewer({
   rows,
   drafts,
+  settings,
   loadError,
 }: {
   rows: QueueRow[]
   drafts: StoredDraft[]
+  settings: Settings | null
   loadError: string
 }) {
   const [authed, setAuthed] = useState(false)
@@ -91,6 +102,15 @@ export default function QueueViewer({
   const [result, setResult] = useState<GenResult | null>(null)
   const [publishingPos, setPublishingPos] = useState<number | null>(null)
   const [published, setPublished] = useState<{ position: number; url: string } | null>(null)
+
+  const [sett, setSett] = useState<Settings | null>(settings)
+  const [startDate, setStartDate] = useState<string>(settings?.start_monday || nextMonday())
+  const [vetoDays, setVetoDays] = useState<number>(settings?.veto_days ?? 2)
+  const [webSearch, setWebSearch] = useState<boolean>(settings?.web_search ?? true)
+  const [savingSett, setSavingSett] = useState(false)
+  const [running, setRunning] = useState(false)
+  const [autoMsg, setAutoMsg] = useState('')
+  const [actingPos, setActingPos] = useState<number | null>(null)
 
   const weeks = useMemo(() => {
     const w: Record<number, QueueRow[]> = {}
@@ -212,6 +232,104 @@ export default function QueueViewer({
     }
   }
 
+  async function saveSettings(armed: boolean) {
+    setSavingSett(true)
+    setAutoMsg('')
+    setGenError('')
+    try {
+      const res = await fetch('/api/blog/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pin,
+          action: 'save',
+          armed,
+          start_monday: startDate,
+          veto_days: vetoDays,
+          web_search: webSearch,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setGenError(data.error || 'Could not save settings.')
+        return
+      }
+      setSett(data.settings)
+      // publish dates were re-stamped server-side; refresh them locally
+      setLocalRows((prev) =>
+        prev.map((r) => {
+          if (r.status === 'published') return r
+          const offset = (r.week_number - 1) * 7 + (r.slot === 1 ? 1 : 3)
+          const base = new Date(`${startDate}T12:00:00Z`)
+          base.setUTCDate(base.getUTCDate() + offset)
+          return { ...r, publish_date: base.toISOString().slice(0, 10) }
+        })
+      )
+      setAutoMsg(armed ? 'Automation is armed. Dates are set across the queue.' : 'Automation is disarmed. Nothing will publish.')
+    } catch {
+      setGenError('Network error while saving settings.')
+    } finally {
+      setSavingSett(false)
+    }
+  }
+
+  async function runNow() {
+    if (typeof window !== 'undefined') {
+      const ok = window.confirm(
+        'Run the automation once right now? It will generate any drafts that are due and publish any review drafts whose date has arrived.'
+      )
+      if (!ok) return
+    }
+    setRunning(true)
+    setAutoMsg('')
+    setGenError('')
+    try {
+      const res = await fetch('/api/blog/cron', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setGenError(data.error || 'The run failed.')
+        return
+      }
+      if (data.skipped) {
+        setAutoMsg('Nothing ran — automation is not armed.')
+      } else {
+        setAutoMsg(`Run complete: ${data.note}. Refresh the page to see updated rows.`)
+      }
+    } catch {
+      setGenError('Network error during the run.')
+    } finally {
+      setRunning(false)
+    }
+  }
+
+  async function queueAction(position: number, action: 'hold' | 'release' | 'skip') {
+    setActingPos(position)
+    setGenError('')
+    try {
+      const res = await fetch('/api/blog/queue-action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin, position, action }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setGenError(data.error || 'Could not update that row.')
+        return
+      }
+      setLocalRows((prev) =>
+        prev.map((r) => (r.position === position ? { ...r, status: data.status } : r))
+      )
+    } catch {
+      setGenError('Network error while updating the row.')
+    } finally {
+      setActingPos(null)
+    }
+  }
+
   const wrap: CSSProperties = {
     fontFamily:
       '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
@@ -274,9 +392,9 @@ export default function QueueViewer({
     <div style={wrap}>
       <h1 style={{ color: GREEN_DARK, fontSize: 28, marginBottom: 4 }}>Blog Queue</h1>
       <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 20 }}>
-        The 30-week content plan, in publish order. Click <strong>Generate draft</strong> on a
-        pending topic to test the writer, then <strong>View draft</strong> to read what it staged.
-        Nothing publishes.
+        The 30-week content plan, in publish order. Arm automation below to run it hands-off, or
+        work a row by hand: <strong>Generate draft</strong>, <strong>View draft</strong>, then
+        <strong> Publish</strong>.
       </p>
 
       {loadError ? (
@@ -302,6 +420,108 @@ export default function QueueViewer({
               counts[s] ? (
                 <Badge key={s} label={`${counts[s]} ${s}`} bg={STATUS_COLOR[s].bg} text={STATUS_COLOR[s].text} />
               ) : null
+            )}
+          </div>
+
+          <div
+            style={{
+              border: `1px solid ${sett?.armed ? '#97c459' : '#e5e7eb'}`,
+              background: sett?.armed ? '#f5fbed' : '#fafafa',
+              borderRadius: 12,
+              padding: '16px 18px',
+              marginBottom: 22,
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+              <h2 style={{ color: GREEN_DARK, fontSize: 17, margin: 0 }}>Automation</h2>
+              <Badge
+                label={sett?.armed ? 'Armed' : 'Off'}
+                bg={sett?.armed ? '#eaf3de' : '#eef2f6'}
+                text={sett?.armed ? '#27500a' : '#475569'}
+              />
+            </div>
+            <p style={{ color: '#6b7280', fontSize: 13, lineHeight: 1.55, margin: '0 0 14px' }}>
+              When armed, a daily job writes each post a couple of days ahead of its date and publishes
+              it on schedule (Tuesdays and Thursdays). Use <strong>Hold</strong> on any staged post to stop
+              it. Disarm to pause everything.
+            </p>
+
+            <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 14 }}>
+              <label style={{ fontSize: 12, color: '#475569', fontWeight: 600 }}>
+                Start (Monday of week 1)
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  style={{
+                    display: 'block',
+                    marginTop: 5,
+                    padding: '7px 9px',
+                    fontSize: 13,
+                    border: '1px solid #d1d5db',
+                    borderRadius: 6,
+                  }}
+                />
+              </label>
+              <label style={{ fontSize: 12, color: '#475569', fontWeight: 600 }}>
+                Veto window (days)
+                <input
+                  type="number"
+                  min={0}
+                  max={7}
+                  value={vetoDays}
+                  onChange={(e) => setVetoDays(Math.max(0, Math.min(7, Number(e.target.value))))}
+                  style={{
+                    display: 'block',
+                    marginTop: 5,
+                    width: 70,
+                    padding: '7px 9px',
+                    fontSize: 13,
+                    border: '1px solid #d1d5db',
+                    borderRadius: 6,
+                  }}
+                />
+              </label>
+              <label style={{ fontSize: 13, color: '#475569', display: 'flex', alignItems: 'center', gap: 7, paddingBottom: 8 }}>
+                <input type="checkbox" checked={webSearch} onChange={(e) => setWebSearch(e.target.checked)} />
+                Use web search when writing
+              </label>
+            </div>
+
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+              <button
+                onClick={() => saveSettings(true)}
+                disabled={savingSett || running}
+                style={smallBtn(true, savingSett || running)}
+              >
+                {savingSett ? 'Saving…' : sett?.armed ? 'Update schedule' : 'Arm automation'}
+              </button>
+              {sett?.armed && (
+                <button
+                  onClick={() => saveSettings(false)}
+                  disabled={savingSett || running}
+                  style={smallBtn(false, savingSett || running)}
+                >
+                  Disarm
+                </button>
+              )}
+              <button
+                onClick={runNow}
+                disabled={running || savingSett}
+                style={smallBtn(false, running || savingSett)}
+              >
+                {running ? 'Running…' : 'Run automation now'}
+              </button>
+              {sett?.last_run_at && (
+                <span style={{ fontSize: 12, color: '#9ca3af' }}>
+                  Last run {new Date(sett.last_run_at).toLocaleString('en-US')}
+                  {sett.last_run_note ? ` — ${sett.last_run_note}` : ''}
+                </span>
+              )}
+            </div>
+
+            {autoMsg && (
+              <div style={{ marginTop: 12, fontSize: 13, color: '#27500a', fontWeight: 600 }}>{autoMsg}</div>
             )}
           </div>
 
@@ -390,6 +610,11 @@ export default function QueueViewer({
                           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
                             <Badge label={AUD_LABEL[r.audience] || r.audience} bg={aud.bg} text={aud.text} />
                             <span style={{ fontSize: 12, color: '#6b7280' }}>{r.category}</span>
+                            {r.publish_date && (
+                              <span style={{ fontSize: 12, color: '#9ca3af' }}>
+                                · {new Date(`${r.publish_date}T12:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                              </span>
+                            )}
                           </div>
                           {r.notes && (
                             <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 6, fontStyle: 'italic', lineHeight: 1.4 }}>
@@ -431,6 +656,41 @@ export default function QueueViewer({
                                 style={smallBtn(false, anyBusy || publishingPos !== null)}
                               >
                                 Regenerate
+                              </button>
+                              <button
+                                onClick={() => queueAction(r.position, 'hold')}
+                                disabled={actingPos === r.position}
+                                style={smallBtn(false, actingPos === r.position)}
+                              >
+                                {actingPos === r.position ? '…' : 'Hold'}
+                              </button>
+                            </>
+                          )}
+
+                          {!busy && r.status === 'held' && (
+                            <>
+                              <button onClick={() => view(r.position)} style={smallBtn(false, false)}>
+                                View draft
+                              </button>
+                              {localDrafts[r.position]?.valid && (
+                                <button
+                                  onClick={() => publish(r.position)}
+                                  disabled={anyBusy || publishingPos !== null}
+                                  style={{
+                                    ...smallBtn(true, anyBusy || publishingPos !== null),
+                                    background: anyBusy || publishingPos !== null ? '#e5e7eb' : GREEN_BRIGHT,
+                                    color: anyBusy || publishingPos !== null ? '#9ca3af' : '#1a3a0f',
+                                  }}
+                                >
+                                  {publishingPos === r.position ? 'Publishing…' : 'Publish now'}
+                                </button>
+                              )}
+                              <button
+                                onClick={() => queueAction(r.position, 'release')}
+                                disabled={actingPos === r.position}
+                                style={smallBtn(false, actingPos === r.position)}
+                              >
+                                {actingPos === r.position ? '…' : 'Release'}
                               </button>
                             </>
                           )}

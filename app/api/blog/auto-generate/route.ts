@@ -249,7 +249,8 @@ function validate(d: Draft, category: string): { checks: Check[]; valid: boolean
 // ── handler ─────────────────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
   try {
-    const { pin, position } = await req.json()
+    const { pin, position, websearch } = await req.json()
+    const useSearch = typeof websearch === 'boolean' ? websearch : USE_WEBSEARCH
 
     const correctPin = process.env.BLOG_ADMIN_PIN
     if (!correctPin || String(pin) !== String(correctPin)) {
@@ -299,10 +300,10 @@ export async function POST(req: NextRequest) {
     let draft: Draft
     try {
       try {
-        draft = await generate(apiKey, row, USE_WEBSEARCH)
+        draft = await generate(apiKey, row, useSearch)
       } catch (e) {
         const msg = e instanceof Error ? e.message : 'generation failed'
-        if (USE_WEBSEARCH && /web_search|tool|model|400/i.test(msg)) {
+        if (useSearch && /web_search|tool|model|400/i.test(msg)) {
           draft = await generate(apiKey, row, false)
         } else {
           throw e
