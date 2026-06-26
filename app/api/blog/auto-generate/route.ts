@@ -12,7 +12,9 @@ const ANTHROPIC_API = 'https://api.anthropic.com/v1/messages'
 // claude-opus-4-8) without a code change. NOTE: claude-sonnet-4-20250514 was
 // retired 2026-04-20 — do not use it. (Pitfall: model strings age silently.)
 const MODEL = process.env.BLOG_GEN_MODEL || 'claude-sonnet-4-6'
-const USE_WEBSEARCH = (process.env.BLOG_GEN_WEBSEARCH || '1') === '1'
+// Web search is OFF by default: the synchronous tool loop can outlast the
+// request window and stall generation. Set BLOG_GEN_WEBSEARCH=1 to enable.
+const USE_WEBSEARCH = (process.env.BLOG_GEN_WEBSEARCH || '0') === '1'
 
 const CATEGORIES = [
   'Family Resources',
@@ -292,17 +294,27 @@ export async function POST(req: NextRequest) {
       .update({ status: 'generating', error: null, updated_at: new Date().toISOString() })
       .eq('position', targetPos)
 
-    // Generate (with web search, falling back to no-tools on tool/model errors)
+    // Generate (web search optional; fall back to no-tools on tool/model errors).
+    // Any failure here resets the row to 'failed' so it never sticks on 'generating'.
     let draft: Draft
     try {
-      draft = await generate(apiKey, row, USE_WEBSEARCH)
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : 'generation failed'
-      if (USE_WEBSEARCH && /web_search|tool|model|400/i.test(msg)) {
-        draft = await generate(apiKey, row, false)
-      } else {
-        throw e
+      try {
+        draft = await generate(apiKey, row, USE_WEBSEARCH)
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : 'generation failed'
+        if (USE_WEBSEARCH && /web_search|tool|model|400/i.test(msg)) {
+          draft = await generate(apiKey, row, false)
+        } else {
+          throw e
+        }
       }
+    } catch (genErr) {
+      const msg = genErr instanceof Error ? genErr.message : 'Generation failed.'
+      await supabase
+        .from('blog_queue')
+        .update({ status: 'failed', error: msg, updated_at: new Date().toISOString() })
+        .eq('position', targetPos)
+      return NextResponse.json({ error: msg }, { status: 500 })
     }
 
     const slug = slugify(draft.postTitle)

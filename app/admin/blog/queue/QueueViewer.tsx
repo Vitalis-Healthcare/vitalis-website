@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState, type CSSProperties } from 'react'
-import type { QueueRow } from './page'
+import type { QueueRow, StoredDraft } from './page'
 
 const GREEN_DARK = '#2D5A1B'
 const GREEN_BRIGHT = '#7AB52A'
@@ -27,20 +27,10 @@ const STATUS_COLOR: Record<string, { bg: string; text: string }> = {
 
 type Check = { check: string; pass: boolean; detail: string }
 type GenResult = {
-  ok: boolean
+  ok?: boolean
   position: number
   valid: boolean
-  draft: {
-    title: string
-    slug: string
-    excerpt: string
-    category: string
-    metaTitle: string
-    metaDescription: string
-    focusKeyword: string
-    secondaryKeywords: string
-    body: string
-  }
+  draft: StoredDraft['draft']
   validation: Check[]
 }
 
@@ -64,11 +54,25 @@ function Badge({ label, bg, text }: { label: string; bg: string; text: string })
   )
 }
 
+const smallBtn = (primary: boolean, disabled: boolean): CSSProperties => ({
+  fontSize: 12,
+  fontWeight: 600,
+  color: disabled ? '#9ca3af' : primary ? '#fff' : GREEN_DARK,
+  background: disabled ? '#e5e7eb' : primary ? GREEN_DARK : 'transparent',
+  border: primary ? 'none' : `1px solid ${disabled ? '#e5e7eb' : '#c0dd97'}`,
+  borderRadius: 6,
+  padding: '5px 10px',
+  cursor: disabled ? 'default' : 'pointer',
+  whiteSpace: 'nowrap',
+})
+
 export default function QueueViewer({
   rows,
+  drafts,
   loadError,
 }: {
   rows: QueueRow[]
+  drafts: StoredDraft[]
   loadError: string
 }) {
   const [authed, setAuthed] = useState(false)
@@ -77,6 +81,11 @@ export default function QueueViewer({
   const [checking, setChecking] = useState(false)
 
   const [localRows, setLocalRows] = useState<QueueRow[]>(rows)
+  const [localDrafts, setLocalDrafts] = useState<Record<number, GenResult>>(() => {
+    const m: Record<number, GenResult> = {}
+    for (const d of drafts) m[d.position] = d
+    return m
+  })
   const [generatingPos, setGeneratingPos] = useState<number | null>(null)
   const [genError, setGenError] = useState('')
   const [result, setResult] = useState<GenResult | null>(null)
@@ -114,6 +123,17 @@ export default function QueueViewer({
     }
   }
 
+  function view(position: number) {
+    const d = localDrafts[position]
+    if (d) {
+      setGenError('')
+      setResult(d)
+      if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' })
+    } else {
+      setGenError('No draft is stored for this row yet.')
+    }
+  }
+
   async function generate(position: number) {
     setGeneratingPos(position)
     setGenError('')
@@ -132,14 +152,20 @@ export default function QueueViewer({
         )
         return
       }
-      setResult(data as GenResult)
+      const gr = data as GenResult
+      setResult(gr)
+      setLocalDrafts((prev) => ({ ...prev, [position]: gr }))
       setLocalRows((prev) =>
         prev.map((r) =>
-          r.position === position ? { ...r, status: 'review', slug: data.draft.slug } : r
+          r.position === position ? { ...r, status: 'review', slug: gr.draft.slug } : r
         )
       )
+      if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' })
     } catch {
-      setGenError('Network error during generation.')
+      setGenError('Network error or timeout. The draft was not saved — use Retry on that row.')
+      setLocalRows((prev) =>
+        prev.map((r) => (r.position === position ? { ...r, status: 'failed' } : r))
+      )
     } finally {
       setGeneratingPos(null)
     }
@@ -207,8 +233,9 @@ export default function QueueViewer({
     <div style={wrap}>
       <h1 style={{ color: GREEN_DARK, fontSize: 28, marginBottom: 4 }}>Blog Queue</h1>
       <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 20 }}>
-        The 30-week content plan, in publish order. Click <strong>Generate draft</strong> on any
-        pending topic to test the writer — it stages a draft for review and publishes nothing.
+        The 30-week content plan, in publish order. Click <strong>Generate draft</strong> on a
+        pending topic to test the writer, then <strong>View draft</strong> to read what it staged.
+        Nothing publishes.
       </p>
 
       {loadError ? (
@@ -278,6 +305,8 @@ export default function QueueViewer({
                     const st = STATUS_COLOR[r.status] || { bg: '#eee', text: '#444' }
                     const busy = generatingPos === r.position
                     const anyBusy = generatingPos !== null
+                    const canGenerate =
+                      r.status === 'pending' || r.status === 'failed' || r.status === 'generating'
                     return (
                       <div
                         key={r.position}
@@ -309,23 +338,27 @@ export default function QueueViewer({
                         </div>
                         <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
                           <Badge label={busy ? 'generating' : r.status} bg={busy ? STATUS_COLOR.generating.bg : st.bg} text={busy ? STATUS_COLOR.generating.text : st.text} />
-                          {(r.status === 'pending' || r.status === 'failed' || r.status === 'review') && (
-                            <button
-                              onClick={() => generate(r.position)}
-                              disabled={anyBusy}
-                              style={{
-                                fontSize: 12,
-                                fontWeight: 600,
-                                color: anyBusy ? '#9ca3af' : '#fff',
-                                background: anyBusy ? '#e5e7eb' : GREEN_DARK,
-                                border: 'none',
-                                borderRadius: 6,
-                                padding: '5px 10px',
-                                cursor: anyBusy ? 'default' : 'pointer',
-                                whiteSpace: 'nowrap',
-                              }}
-                            >
-                              {busy ? 'Generating…' : r.status === 'review' ? 'Regenerate' : 'Generate draft'}
+
+                          {busy && (
+                            <button disabled style={smallBtn(true, true)}>
+                              Generating…
+                            </button>
+                          )}
+
+                          {!busy && r.status === 'review' && (
+                            <>
+                              <button onClick={() => view(r.position)} style={smallBtn(true, false)}>
+                                View draft
+                              </button>
+                              <button onClick={() => generate(r.position)} disabled={anyBusy} style={smallBtn(false, anyBusy)}>
+                                Regenerate
+                              </button>
+                            </>
+                          )}
+
+                          {!busy && canGenerate && (
+                            <button onClick={() => generate(r.position)} disabled={anyBusy} style={smallBtn(true, anyBusy)}>
+                              {r.status === 'generating' ? 'Retry' : 'Generate draft'}
                             </button>
                           )}
                         </div>
@@ -356,7 +389,7 @@ function ReviewPanel({ result, onClose }: { result: GenResult; onClose: () => vo
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
         <div style={{ fontSize: 13, fontWeight: 700, color: allPass ? '#27500a' : '#a3261f' }}>
-          DRAFT STAGED · position {result.position} · {allPass ? 'all checks passed' : 'needs attention'}
+          DRAFT · position {result.position} · {allPass ? 'all checks passed' : 'needs attention'}
         </div>
         <button
           onClick={onClose}
