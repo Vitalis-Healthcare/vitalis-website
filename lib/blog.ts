@@ -14,6 +14,8 @@ export interface PostFrontmatter {
   category: string
   author?: string
   image?: string
+  metaTitle?: string
+  metaDescription?: string
 }
 
 export interface Post extends PostFrontmatter {
@@ -46,6 +48,8 @@ export async function getPost(slug: string): Promise<Post | null> {
     category: data.category ?? 'General',
     author: data.author ?? 'Vitalis HealthCare',
     image: data.image ?? null,
+    metaTitle: data.metaTitle ?? null,
+    metaDescription: data.metaDescription ?? null,
     contentHtml: processed.toString(),
   }
 }

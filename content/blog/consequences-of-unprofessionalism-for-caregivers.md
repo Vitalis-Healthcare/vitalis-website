@@ -5,6 +5,8 @@ dateFormatted: "November 28, 2023"
 excerpt: "Not adhering to ethical standards and maintaining professionalism as a caregiver has its consequences which negatively affects recipients of caregivers, organizations they work..."
 category: "Caregiver Tips"
 author: "Vitalis HealthCare"
+metaTitle: "Consequences of Unprofessionalism for Caregivers | Vitalis"
+metaDescription: "Unprofessional caregiving harms clients, agencies, and caregivers themselves. The real consequences — and how to uphold professional standards in home care."
 ---
 
 Not adhering to ethical standards and maintaining professionalism as a caregiver has its consequences which negatively affects recipients of caregivers, organizations they work for and even caregivers themselves. Understanding the far reaching consequences of unprofessionalism as a caregiver can help you avoid being unprofessional in your caregiving practice.

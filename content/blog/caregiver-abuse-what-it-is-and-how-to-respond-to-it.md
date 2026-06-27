@@ -5,6 +5,8 @@ dateFormatted: "January 31, 2024"
 excerpt: "Much attention is given to the abuse of care recipients by caregivers, and rightfully so, however, it is also important to highlight and address the incidences where the caregiver..."
 category: "Caregiver Tips"
 author: "Vitalis HealthCare"
+metaTitle: "Caregiver Abuse: What It Is & How to Respond | Vitalis"
+metaDescription: "Caregivers can be mistreated by the people they care for, too. How to recognize caregiver abuse, set boundaries, and respond safely — guidance from Vitalis HealthCare."
 ---
 
 Much attention is given to the abuse of care recipients by caregivers, and rightfully so, however, it is also important to highlight and address the incidences where the caregiver is the one being abused by their care recipients.
