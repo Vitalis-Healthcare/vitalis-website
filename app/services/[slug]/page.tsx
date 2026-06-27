@@ -6,6 +6,7 @@ import TrustBar from '@/components/TrustBar'
 import Footer from '@/components/Footer'
 import CTASection from '@/components/CTASection'
 import { services, getService } from '@/lib/data/services'
+import { getRelatedArticles } from '@/lib/data/related-content'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -37,6 +38,7 @@ export default async function ServicePage({ params }: Props) {
     whoNeedsIt, whatIncludes, howWeDeliver, faqs, testimonial,
     relatedServices, relatedConditions,
   } = svc
+  const guides = getRelatedArticles(slug)
 
   const schema = {
     '@context': 'https://schema.org',
@@ -283,6 +285,23 @@ export default async function ServicePage({ params }: Props) {
           </div>
         </div>
       </section>
+
+      {/* Helpful guides from our blog */}
+      {guides.length > 0 && (
+        <section className="sec sec-alt">
+          <div className="inner">
+            <p className="sec-label">Helpful reading</p>
+            <h2 className="sec-h">Guides on {svc.shortName.toLowerCase()}</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '16px' }}>
+              {guides.map(({ slug: gs, title }) => (
+                <a key={gs} href={`/blog/${gs}`} style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#fff', borderRadius: '10px', border: '1px solid #c0dd97', padding: '16px 18px', fontSize: '15px', fontWeight: 500, color: 'var(--text)', lineHeight: 1.5 }}>
+                  <span className="cdot" style={{ flexShrink: 0 }} />{title} &rarr;
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <Footer />
     </>

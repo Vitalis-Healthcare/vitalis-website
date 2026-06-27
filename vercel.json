@@ -5,6 +5,11 @@
   "installCommand": "npm install",
   "redirects": [
     {
+      "source": "/blog/how-home-care-can-improve-the-quality-of-life-of-seniors-with-dementia",
+      "destination": "/blog/how-home-care-can-improve-quality-of-life-for-seniors-with-dementia",
+      "permanent": true
+    },
+    {
       "source": "/forms",
       "destination": "/blog/forms",
       "permanent": true
