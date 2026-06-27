@@ -5,6 +5,7 @@ import TrustBar from '@/components/TrustBar'
 import Footer from '@/components/Footer'
 import CTASection from '@/components/CTASection'
 import { conditions, getCondition } from '@/lib/data/conditions'
+import { getRelatedArticles, getRelatedServices } from '@/lib/data/related-content'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -32,6 +33,8 @@ export default async function ConditionPage({ params }: Props) {
   if (!cond) notFound()
 
   const { name, badge, h1, lead, whatItIs, signs, howWeHelp, faqs, testimonial, relatedConditions } = cond
+  const relatedServices = getRelatedServices(slug)
+  const guides = getRelatedArticles(slug)
 
   const schema = {
     '@context': 'https://schema.org',
@@ -42,6 +45,18 @@ export default async function ConditionPage({ params }: Props) {
         url: `https://www.vitalishealthcare.com/conditions/${slug}`,
         description: cond.metaDescription,
         medicalSpecialty: 'Home Health Care',
+        provider: {
+          '@type': 'LocalBusiness',
+          name: 'Vitalis HealthCare Services',
+          telephone: '+12407166874',
+          address: {
+            '@type': 'PostalAddress',
+            streetAddress: '8757 Georgia Avenue, Suite 440',
+            addressLocality: 'Silver Spring',
+            addressRegion: 'MD',
+            postalCode: '20910',
+          },
+        },
       },
       {
         '@type': 'FAQPage',
@@ -188,6 +203,40 @@ export default async function ConditionPage({ params }: Props) {
           </div>
         </div>
       </section>
+
+      {/* Care services for this condition */}
+      {relatedServices.length > 0 && (
+        <section className="sec sec-alt">
+          <div className="inner-wide">
+            <p className="sec-label">Care that helps</p>
+            <h2 className="sec-h">Services we use to support {name.toLowerCase()}</h2>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '16px' }}>
+              {relatedServices.map(({ name: rn, slug: rs }) => (
+                <a key={rs} href={`/services/${rs}`} style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'var(--g-lt)', borderRadius: '10px', border: '1px solid #c0dd97', padding: '14px 18px', fontSize: '15px', fontWeight: 500, color: 'var(--g-bd)' }}>
+                  <span className="cdot" />{rn} &rarr;
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Helpful guides from our blog */}
+      {guides.length > 0 && (
+        <section className="sec">
+          <div className="inner">
+            <p className="sec-label">Helpful reading</p>
+            <h2 className="sec-h">Guides on {name.toLowerCase()}</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '16px' }}>
+              {guides.map(({ slug: gs, title }) => (
+                <a key={gs} href={`/blog/${gs}`} style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#fafaf8', borderRadius: '10px', border: '1px solid var(--border)', padding: '16px 18px', fontSize: '15px', fontWeight: 500, color: 'var(--text)', lineHeight: 1.5 }}>
+                  <span className="cdot" style={{ flexShrink: 0 }} />{title} &rarr;
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <Footer />
     </>
