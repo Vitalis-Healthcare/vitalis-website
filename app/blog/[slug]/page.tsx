@@ -18,12 +18,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await getPost(slug)
   if (!post) return {}
   return {
-    title: { absolute: `${post.title} | Vitalis HealthCare Blog` },
+    title: { absolute: post.metaTitle ?? `${post.title} | Vitalis HealthCare Blog` },
     alternates: { canonical: `/blog/${slug}` },
-    description: post.excerpt,
+    description: post.metaDescription ?? post.excerpt,
     openGraph: {
-      title: post.title,
-      description: post.excerpt,
+      title: post.metaTitle ?? post.title,
+      description: post.metaDescription ?? post.excerpt,
       type: 'article',
       publishedTime: post.date,
     },
