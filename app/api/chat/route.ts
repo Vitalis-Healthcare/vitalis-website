@@ -9,6 +9,27 @@ import { createServiceClient } from '@/lib/supabase'
 
 const ANTHROPIC_API = 'https://api.anthropic.com/v1/messages'
 
+/* ─────────────────────────────────────────────
+   THE MODEL IS AN ENV VAR, NOT A LITERAL.
+
+   This route sat on `claude-sonnet-4-20250514` until 11 August 2026, long
+   after that model was retired. Every visitor who opened the widget got
+   "I'm having trouble connecting right now" — which reads as a passing
+   glitch, so nobody reported it, and the real error only ever reached the
+   Vercel logs. Leads that would have come through the widget simply did
+   not exist; there was no failure queue to notice.
+
+   A literal means only a code deploy can fix that. `BLOG_GEN_MODEL` on the
+   blog writer proved the better pattern: set VITA_CHAT_MODEL in Vercel and
+   redeploy, no ship required.
+
+   The default is a pinned snapshot on purpose. Model IDs from the 4.6
+   generation on are NOT evergreen pointers — `claude-sonnet-5` is one fixed
+   model, so this will retire too one day. When it does, the fix is a Vercel
+   setting.
+   ───────────────────────────────────────────── */
+const VITA_MODEL = process.env.VITA_CHAT_MODEL || 'claude-sonnet-5'
+
 const SYSTEM_PROMPT = `You are **Vita**, the friendly AI care advisor on the Vitalis HealthCare website. Your purpose is to help prospective clients and their families understand home care options, feel comfortable with what Vitalis offers, and ultimately take the next step toward getting care.
 
 ═══ WHO YOU ARE ═══
@@ -203,7 +224,7 @@ export async function POST(req: NextRequest) {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: VITA_MODEL,
         max_tokens: 1024,
         system: SYSTEM_PROMPT,
         messages: messages.slice(-20),
@@ -212,7 +233,7 @@ export async function POST(req: NextRequest) {
 
     if (!res.ok) {
       const errText = await res.text()
-      console.error('Anthropic API error:', res.status, errText)
+      console.error('Anthropic API error:', VITA_MODEL, res.status, errText)
       return NextResponse.json(
         { error: 'I\'m having trouble connecting right now. Please try again, or call us directly at 240.716.6874.' },
         { status: 502 },
