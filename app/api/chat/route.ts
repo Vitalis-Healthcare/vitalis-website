@@ -180,16 +180,30 @@ async function recordMessage(sessionId: string, role: 'user' | 'assistant', cont
   try {
     const sb = createServiceClient()
 
-    await sb.from('vita_messages').insert({ session_id: sessionId, role, content })
+    /* Supabase returns write errors, it does not throw them. Neither of
+       these was checked before v2.9.0, so both failed silently: five of
+       eight sessions recorded no message at all, and msg_count was wrong
+       on three of the four that did. A swallowed error is how a table ends
+       up empty with nobody knowing. */
+    const { error: insErr } = await sb
+      .from('vita_messages')
+      .insert({ session_id: sessionId, role, content })
+    if (insErr) {
+      console.error('vita_messages insert failed:', role, sessionId, insErr.message)
+      return
+    }
 
     // Update session metadata
-    await sb
+    const { error: updErr } = await sb
       .from('vita_sessions')
       .update({
         last_msg_at: new Date().toISOString(),
         msg_count: await getMessageCount(sessionId),
       })
       .eq('session_id', sessionId)
+    if (updErr) {
+      console.error('vita_sessions update failed:', sessionId, updErr.message)
+    }
   } catch {
     // Supabase not configured — continue silently
   }
