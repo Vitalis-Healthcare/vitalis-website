@@ -2,79 +2,113 @@
 title: "Vitalis HealthCare Staff & Client Forms"
 date: "2026-04-05"
 dateFormatted: "April 5, 2026"
-excerpt: "Access all Vitalis HealthCare forms online — incident reports, complaint forms, leave requests, and referral forms for caregivers and families."
+excerpt: "All Vitalis HealthCare forms in one place — report an incident, an illness, a schedule problem, a complaint, or a leave request, ask about care, or apply for a job."
 category: "Company News"
 author: "Vitalis HealthCare"
 metaTitle: "Staff & Client Forms | Vitalis HealthCare"
-metaDescription: "Access Vitalis HealthCare online forms including incident reports, complaint forms, leave requests, and caregiver and client referrals."
+metaDescription: "Report an incident, an illness, a missed visit, a complaint, or a leave request to Vitalis HealthCare. All staff and client forms in one place."
 focusKeyword: "vitalis healthcare forms"
-secondaryKeywords: "caregiver forms, incident report, complaint form, leave request, referral form"
+secondaryKeywords: "caregiver forms, incident report, complaint form, leave request, caregiver jobs maryland"
 ---
 
-All Vitalis HealthCare forms are available online for caregivers, clients, and families. Use the links below to submit reports, requests, and referrals directly to the Vitalis administration team.
+Our forms have moved. They now live in one place, so you no longer have to work out which link to use before you start.
 
----
+**Go to [vita.vitalishealthcare.com/report](https://vita.vitalishealthcare.com/report).**
 
-## Caregiver & Staff Forms
+The page is called Tell the office, and it asks you one question: what would you like to tell us? Choose the answer that fits your situation and it will take you to the right form. There is no password to remember and nothing to install, and every form is designed to work properly on a phone.
 
-**Incident Report Form**
+Please use the new page rather than an older form link you may have saved or bookmarked. Some of the old links still open, but what you send through them no longer reaches the office the same way.
 
-Use this form to report any significant events that need to be brought to the attention of the Agency administration — including falls, injuries, abuse, or any unusual occurrences during a shift.
-
-[Submit an Incident Report →](https://form.jotform.com/223494968368172)
-
----
-
-**Illness / Infection Report Form**
-
-Use this form to report any illness or infection experienced by a client or caregiver during the course of care. Prompt reporting helps us protect everyone involved.
-
-[Submit an Illness Report →](https://form.jotform.com/231525139443049)
+**If someone is in danger or needs urgent medical help, call 911 first.** Fill in the form afterward, once everybody is safe.
 
 ---
 
-**Leave / Absence Request Form**
+## Pick the one that fits
 
-Caregivers — use this form to call out of a shift, request a leave of absence, or submit your 2-week notice upon resignation. Please submit this form as early as possible so we can arrange coverage.
+**Something happened to a client or caregiver**
 
-[Submit a Leave Request →](https://zfrmz.com/l1lBuoB2GjU5y3ORzq6Y)
+Use this for a fall, an injury, a hospital visit, a near miss, or anything else that worried you. Tell us as soon as you can, even if it turned out fine in the end — a near miss today is often how we prevent something serious later.
 
----
-
-## Complaint Form
-
-**Vitalis Complaint Form**
-
-Use this form to register a complaint about the quality of service being rendered by a Vitalis caregiver. All complaints are reviewed by our Client Services team and handled promptly and confidentially.
-
-[Submit a Complaint →](https://form.jotform.com/231716055926054)
+[Report an incident →](https://vita.vitalishealthcare.com/report/incident)
 
 ---
 
-## Referral Forms
+**Someone is unwell**
 
-**Refer a Client**
+Use this whether the person who is unwell is a client, another staff member, or you. It covers an infection, a fever, or any symptoms you believe the office should know about, including symptoms that seem minor at the time.
 
-Do you know someone who needs home health care in Maryland? Use this form to refer a potential client to Vitalis HealthCare or to learn about our client referral program.
-
-[Refer a Client →](https://zfrmz.com/1zP0SMWF1LwCfK2A2GXk)
+[Report an illness →](https://vita.vitalishealthcare.com/report/illness)
 
 ---
 
-**Refer a Caregiver**
+**A problem with a visit or the schedule**
 
-Do you know someone looking for work as a home health aide in Maryland? Use this form to refer a potential caregiver to the agency or to learn about our staff referral program.
+Use this for a missed visit, arriving late, leaving early, a canceled visit, or a client who did not want care that day. Tell us what happened even when the client was fine about it.
 
-[Refer a Caregiver →](https://zfrmz.com/OoMteoPnXoW9vLRDohaV)
+[Report a visit problem →](https://vita.vitalishealthcare.com/report/service-exception)
 
 ---
 
-## Need Help?
+**Time off, a missed shift, or leaving Vitalis**
 
-If you have trouble accessing any of these vitalis healthcare forms or need assistance, contact us directly:
+Use this if you cannot make a shift, you would like to request time off, or you are giving your notice. Tell us as early as you are able to, because the sooner we know, the more time we have to arrange cover for your clients.
+
+[Request leave →](https://vita.vitalishealthcare.com/report/leave)
+
+---
+
+**A concern or complaint**
+
+Use this when something has gone wrong and you want it looked into properly. Clients, family members, and staff can all use this form, and every complaint we receive is reviewed.
+
+[Raise a concern →](https://vita.vitalishealthcare.com/report/complaint)
+
+---
+
+**An update for the office**
+
+Use this for anything the office should know that is not a problem — a change of address or phone number, a note about how a client is doing, or anything else worth passing on.
+
+[Send an update →](https://vita.vitalishealthcare.com/report/update)
+
+---
+
+## What happens after you send a form
+
+Your report goes straight to the office, and the right supervisor is notified automatically based on what you reported and which client it concerns.
+
+When you finish, a reference number appears on the screen — something like INC-2026-0001. Write it down or take a screenshot of it. If you call us about that report later, the number lets us find it immediately.
+
+If a situation is urgent, please do not wait for a reply to your form. Call us.
+
+---
+
+## Looking for care, or looking for work?
+
+These two are open to anyone, so please pass them on. Send the first to a family who needs help at home, and the second to someone you know who is looking for work.
+
+**Ask about care for yourself or someone else**
+
+Tell us who needs help at home and what kind of support they are looking for, and a member of our team will call you back. There is no cost for the conversation and no commitment to go ahead.
+
+[Ask about care →](https://getcare.vitalishealthcare.com)
+
+---
+
+**Apply for a caregiver job**
+
+We are hiring CNAs, GNAs, CMTs, and HHAs across Montgomery County and the areas around it. The application takes about ten minutes, and it asks about your certification, your experience, and the hours you can work.
+
+[Apply to work with us →](https://apply.vitalishealthcare.com)
+
+---
+
+## Need help?
+
+If a form will not open, or you are not certain which one you need, please get in touch. It is always better to call and ask than to guess or to leave something unreported.
 
 **Phone:** [240.716.6874](tel:2407166874)
 **Email:** team@vitalishealthcare.com
 **WhatsApp:** [Message us](https://wa.me/12027796027)
 
-Our team is available Monday–Friday 9am–5pm and Saturday 10am–4pm.
+We are here Monday to Friday, 9am to 5pm, and Saturday, 10am to 4pm.
