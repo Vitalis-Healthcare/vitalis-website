@@ -157,15 +157,30 @@ async function ensureSession(sessionId: string, pageUrl: string) {
   }
 }
 
-async function saveMessages(sessionId: string, userContent: string, assistantContent: string) {
+/* ─────────────────────────────────────────────
+   THE VISITOR'S QUESTION IS SAVED BEFORE THE MODEL IS CALLED.
+
+   This used to be a single function writing both halves together, called
+   only AFTER a successful Anthropic response. So while the model was
+   retired, vita_sessions kept a row for every visitor who typed and
+   vita_messages kept nothing at all. Their questions were discarded.
+
+   That is why five sessions between April and August 2026 produced one
+   saved question. When the next model retires — and it will, the default
+   is a pinned snapshot — sessions would keep accruing and the record would
+   quietly stay empty again.
+
+   So each message is recorded on its own, the visitor's as soon as it
+   arrives. Both writes are awaited: a fire-and-forget insert can be lost
+   when the serverless function freezes after the response returns, which
+   defeats the point of writing it early.
+   ───────────────────────────────────────────── */
+async function recordMessage(sessionId: string, role: 'user' | 'assistant', content: string) {
+  if (!content) return
   try {
     const sb = createServiceClient()
 
-    // Save both messages
-    await sb.from('vita_messages').insert([
-      { session_id: sessionId, role: 'user', content: userContent },
-      { session_id: sessionId, role: 'assistant', content: assistantContent },
-    ])
+    await sb.from('vita_messages').insert({ session_id: sessionId, role, content })
 
     // Update session metadata
     await sb
@@ -216,6 +231,12 @@ export async function POST(req: NextRequest) {
     // Get the last user message for persistence
     const lastUserMsg = messages[messages.length - 1]?.content || ''
 
+    // Record the visitor's question BEFORE calling the model, so it survives
+    // a model outage instead of being discarded with the failed response.
+    if (sessionId) {
+      await recordMessage(sessionId, 'user', lastUserMsg)
+    }
+
     const res = await fetch(ANTHROPIC_API, {
       method: 'POST',
       headers: {
@@ -248,11 +269,11 @@ export async function POST(req: NextRequest) {
 
     const finalReply = reply || 'I\'m sorry, I couldn\'t generate a response. Please try again or call us at 240.716.6874.'
 
-    // Persist messages to Supabase (non-blocking on failure)
+    // Persist the reply to Supabase (soft-fails internally)
     if (sessionId) {
       // Save the clean version (without [OFFER_CALLBACK] marker)
       const cleanReply = finalReply.replace(/\[OFFER_CALLBACK\]/g, '').trim()
-      saveMessages(sessionId, lastUserMsg, cleanReply).catch(() => {})
+      await recordMessage(sessionId, 'assistant', cleanReply)
     }
 
     return NextResponse.json({ reply: finalReply })
